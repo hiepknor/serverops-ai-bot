@@ -60,20 +60,20 @@ Checkpoint:
 
 ## U4: Mocked Full AI Loop Tests
 
-Status: planned
+Status: complete
 
-- [ ] Add fake Responses client fixtures.
-- [ ] Add fake tool-call response fixtures.
-- [ ] Test `/ask` authorization behavior.
-- [ ] Test `/summarize_log` with secret redaction.
-- [ ] Test unknown AI tool rejection and audit.
-- [ ] Test Vietnamese response behavior.
+- [x] Add fake Responses client fixtures.
+- [x] Add fake tool-call response fixtures.
+- [x] Test `/ask` authorization behavior.
+- [x] Test `/summarize_log` with secret redaction.
+- [x] Test unknown AI tool rejection and audit.
+- [x] Test Vietnamese response behavior.
 
 Checkpoint:
 
-- [ ] Tests prove Telegram command -> AI client -> tool router -> response.
-- [ ] No external network, Telegram, Docker, systemd, or OpenAI dependency in default tests.
-- [ ] Test failures produce actionable diagnostics.
+- [x] Tests prove Telegram command -> AI client -> tool router -> response.
+- [x] No external network, Telegram, Docker, systemd, or OpenAI dependency in default tests.
+- [x] Test failures produce actionable diagnostics.
 
 ## U5: Owner Audit Command
 
