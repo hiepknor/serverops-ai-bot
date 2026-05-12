@@ -43,20 +43,20 @@ Checkpoint:
 
 ## U3: AI Tool Call Audit
 
-Status: planned
+Status: complete
 
-- [ ] Define audit action naming for AI tools, such as `ai_tool.read_log`.
-- [ ] Add audit recording around every AI tool call.
-- [ ] Audit unknown tool requests as rejected.
-- [ ] Audit RBAC and allowlist denials.
-- [ ] Sanitize error text before audit persistence.
+- [x] Define audit action naming for AI tools, such as `ai_tool.read_log`.
+- [x] Add audit recording around every AI tool call.
+- [x] Audit unknown tool requests as rejected.
+- [x] Audit RBAC and allowlist denials.
+- [x] Sanitize error text before audit persistence.
 
 Checkpoint:
 
-- [ ] Successful AI tool calls create audit records.
-- [ ] Rejected AI tool calls create audit records.
-- [ ] Audit rows include user, role, command, tool, target, result, and sanitized error.
-- [ ] Tests verify audit without real OpenAI calls.
+- [x] Successful AI tool calls create audit records.
+- [x] Rejected AI tool calls create audit records.
+- [x] Audit rows include user, role, command, tool, target, result, and sanitized error.
+- [x] Tests verify audit without real OpenAI calls.
 
 ## U4: Mocked Full AI Loop Tests
 

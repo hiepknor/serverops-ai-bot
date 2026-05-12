@@ -4,8 +4,9 @@ from dataclasses import dataclass
 from typing import Any, Protocol
 
 from app.ai.client import ResponsesClient
-from app.ai.router import route_tool_call
+from app.ai.router import AIToolAuditContext, route_tool_call
 from app.config import Settings
+from app.core.audit import AuditStore
 from app.core.security import Role, redact_secrets
 
 
@@ -32,10 +33,18 @@ def answer_operational_question(
     role: Role,
     settings: Settings,
     client: AIClient | None = None,
+    audit: AuditStore | None = None,
+    audit_context: AIToolAuditContext | None = None,
 ) -> AIAnswer:
     ai_client = client or ResponsesClient(settings)
     response = ai_client.create_response(question)
-    tool_outputs = _route_tool_calls(response, role=role, settings=settings)
+    tool_outputs = _route_tool_calls(
+        response,
+        role=role,
+        settings=settings,
+        audit=audit,
+        audit_context=audit_context,
+    )
     if tool_outputs:
         response = ai_client.create_response(
             question,
@@ -56,12 +65,16 @@ def summarize_log_context(
     settings: Settings,
     client: AIClient | None = None,
     incident_mode: bool = False,
+    audit: AuditStore | None = None,
+    audit_context: AIToolAuditContext | None = None,
 ) -> AIAnswer:
     context_result = route_tool_call(
         tool_name="read_log",
         arguments={"target": target, "lines": settings.log_tail_lines},
         role=role,
         settings=settings,
+        audit=audit,
+        audit_context=audit_context,
     )
     if not context_result.ok:
         return AIAnswer(text=_tool_error_text(context_result.error, settings), tool_results=[])
@@ -87,6 +100,8 @@ def summarize_log_context(
         role=role,
         settings=settings,
         client=client,
+        audit=audit,
+        audit_context=audit_context,
     )
     return AIAnswer(
         text=answer.text,
@@ -94,7 +109,14 @@ def summarize_log_context(
     )
 
 
-def _route_tool_calls(response: Any, *, role: Role, settings: Settings) -> list[dict[str, Any]]:
+def _route_tool_calls(
+    response: Any,
+    *,
+    role: Role,
+    settings: Settings,
+    audit: AuditStore | None,
+    audit_context: AIToolAuditContext | None,
+) -> list[dict[str, Any]]:
     tool_outputs = []
     for call in _extract_tool_calls(response):
         result = route_tool_call(
@@ -102,6 +124,8 @@ def _route_tool_calls(response: Any, *, role: Role, settings: Settings) -> list[
             arguments=call["arguments"],
             role=role,
             settings=settings,
+            audit=audit,
+            audit_context=audit_context,
         )
         tool_outputs.append(
             {

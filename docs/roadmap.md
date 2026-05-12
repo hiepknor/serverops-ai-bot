@@ -91,7 +91,7 @@ Checkpoint:
 
 - Scheduled read-only alerts to owners. (done; see `upgrade-roadmap.md`)
 - AI command flow for `/ask`, `/summarize_log`, and `/incident`. (done; see `upgrade-roadmap.md`)
-- AI tool call audit.
+- AI tool call audit. (done; see `upgrade-roadmap.md`)
 - Mocked full AI loop tests.
 - Owner `/audit` command.
 - Dependency locking.

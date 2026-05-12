@@ -15,6 +15,7 @@ class AuditEvent:
     action: str
     target: str
     result: str
+    command: str | None = None
     confirmation_status: str = "not_required"
     error: str | None = None
 
@@ -40,11 +41,18 @@ class AuditStore:
                     action TEXT NOT NULL,
                     target TEXT NOT NULL,
                     result TEXT NOT NULL,
+                    command TEXT,
                     confirmation_status TEXT NOT NULL,
                     error TEXT
                 )
                 """
             )
+            columns = {
+                row[1]
+                for row in connection.execute("PRAGMA table_info(audit_events)").fetchall()
+            }
+            if "command" not in columns:
+                connection.execute("ALTER TABLE audit_events ADD COLUMN command TEXT")
 
     def record(self, event: AuditEvent) -> int:
         self.initialize()
@@ -59,10 +67,11 @@ class AuditStore:
                     action,
                     target,
                     result,
+                    command,
                     confirmation_status,
                     error
                 )
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
                     created_at,
@@ -71,6 +80,7 @@ class AuditStore:
                     event.action,
                     event.target,
                     event.result,
+                    event.command,
                     event.confirmation_status,
                     event.error,
                 ),
@@ -91,4 +101,3 @@ class AuditStore:
                 (limit,),
             )
             return list(cursor.fetchall())
-

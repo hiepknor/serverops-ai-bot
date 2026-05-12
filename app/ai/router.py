@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from dataclasses import dataclass
 from typing import Any
 
 from pydantic import ValidationError
@@ -13,7 +14,8 @@ from app.ai.schemas import (
     ToolResult,
 )
 from app.config import Settings
-from app.core.security import Permission, Role, has_permission
+from app.core.audit import AuditEvent, AuditStore
+from app.core.security import Permission, Role, has_permission, redact_secrets
 from app.tools.docker_tools import (
     DockerAccessError,
     DockerUnavailableError,
@@ -28,26 +30,44 @@ class ToolCallRejected(ValueError):
     pass
 
 
+@dataclass(frozen=True)
+class AIToolAuditContext:
+    user_id: int
+    role: Role
+    command: str
+
+
 def route_tool_call(
     *,
     tool_name: str,
     arguments: dict[str, Any] | str | None,
     role: Role,
     settings: Settings,
+    audit: AuditStore | None = None,
+    audit_context: AIToolAuditContext | None = None,
 ) -> ToolResult:
     try:
         parsed_arguments = _validate_arguments(tool_name, arguments)
         permission = _permission_for_tool(tool_name)
         if not has_permission(role, permission):
             raise ToolCallRejected(f"role {role} cannot use {tool_name}")
-        return _execute_tool(tool_name, parsed_arguments, settings)
+        result = _execute_tool(tool_name, parsed_arguments, settings)
     except ToolCallRejected as exc:
-        return ToolResult(
+        result = ToolResult(
             ok=False,
             tool_name=tool_name,
             message="Tool call rejected.",
             error=str(exc),
         )
+    _record_ai_tool_audit(
+        audit=audit,
+        context=audit_context,
+        tool_name=tool_name,
+        arguments=arguments,
+        result=result,
+        settings=settings,
+    )
+    return result
 
 
 def _validate_arguments(
@@ -197,3 +217,73 @@ def _known_secrets(settings: Settings) -> list[str]:
         settings.telegram_bot_token.get_secret_value(),
         settings.openai_api_key.get_secret_value(),
     ]
+
+
+def _record_ai_tool_audit(
+    *,
+    audit: AuditStore | None,
+    context: AIToolAuditContext | None,
+    tool_name: str,
+    arguments: dict[str, Any] | str | None,
+    result: ToolResult,
+    settings: Settings,
+) -> None:
+    if audit is None or context is None:
+        return
+
+    audit.record(
+        AuditEvent(
+            user_id=context.user_id,
+            role=str(context.role),
+            action=f"ai_tool.{tool_name}",
+            target=_audit_target(tool_name, arguments),
+            result=_audit_result(result),
+            command=context.command,
+            confirmation_status="not_required",
+            error=_audit_error(result.error, settings),
+        )
+    )
+
+
+def _audit_target(tool_name: str, arguments: dict[str, Any] | str | None) -> str:
+    raw_arguments = _safe_decode_arguments(arguments)
+    if tool_name == "get_system_status":
+        return "system"
+    if tool_name == "list_docker_containers":
+        return "containers"
+    if tool_name == "read_log":
+        target = raw_arguments.get("target")
+        return target if isinstance(target, str) else ""
+    if tool_name == "read_docker_logs":
+        container = raw_arguments.get("container")
+        return container if isinstance(container, str) else ""
+    return ""
+
+
+def _safe_decode_arguments(arguments: dict[str, Any] | str | None) -> dict[str, Any]:
+    if isinstance(arguments, dict):
+        return arguments
+    if isinstance(arguments, str):
+        try:
+            decoded = json.loads(arguments)
+        except json.JSONDecodeError:
+            return {}
+        return decoded if isinstance(decoded, dict) else {}
+    return {}
+
+
+def _audit_result(result: ToolResult) -> str:
+    if result.ok:
+        return "success"
+    error = result.error or ""
+    if result.message == "Tool call rejected.":
+        return "denied" if error.startswith("role ") else "rejected"
+    if "access denied" in result.message.lower():
+        return "denied"
+    return "failed"
+
+
+def _audit_error(error: str | None, settings: Settings) -> str | None:
+    if error is None:
+        return None
+    return redact_secrets(error, known_secrets=_known_secrets(settings))
