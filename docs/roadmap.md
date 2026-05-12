@@ -57,16 +57,18 @@ Checkpoint:
 
 ## Phase 4: AI Assistant
 
-- [ ] Add OpenAI Responses API client.
-- [ ] Define Pydantic tool schemas.
-- [ ] Add tool router with RBAC and allowlist checks.
-- [ ] Add log and incident summarization prompts.
+- [x] Add OpenAI Responses API client.
+- [x] Define Pydantic tool schemas.
+- [x] Add tool router with RBAC and allowlist checks.
+- [x] Add log and incident summarization prompts.
+- [ ] Add Telegram command flow for AI summaries.
 
 Checkpoint:
 
-- [ ] AI cannot call tools outside the approved schema.
-- [ ] AI sees sanitized, bounded context only.
-- [ ] Tool-call rejection paths are tested.
+- [x] AI cannot call tools outside the approved schema.
+- [x] AI sees sanitized, bounded context only.
+- [x] Tool-call rejection paths are tested.
+- [ ] AI command flow is tested without real OpenAI API calls.
 
 ## Phase 5: Deployment
 
