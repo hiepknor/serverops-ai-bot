@@ -186,7 +186,8 @@ serverops-ai-bot/
 ├── data/
 ├── docker-compose.yml
 ├── Dockerfile
-├── requirements.txt
+├── Makefile
+├── pyproject.toml
 ├── .env.example
 ├── README.md
 └── serverops-ai-bot.service
@@ -264,6 +265,9 @@ VIEWER_IDS=
 DATABASE_URL=sqlite:///data/serverops.db
 
 LOG_LEVEL=INFO
+
+ALLOWED_CONTAINERS=nginx,api
+ALLOWED_LOG_FILES=nginx_errors:/host/var/log/nginx/error.log
 ```
 
 ---
@@ -273,7 +277,19 @@ LOG_LEVEL=INFO
 ## Build & Run
 
 ```bash
-docker compose up -d --build
+make docker-up
+```
+
+Stop:
+
+```bash
+make docker-down
+```
+
+Follow logs:
+
+```bash
+make docker-logs
 ```
 
 ---
@@ -283,19 +299,20 @@ docker compose up -d --build
 ```yaml
 services:
   serverops-ai-bot:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: serverops-ai-bot
-
     restart: unless-stopped
-
     env_file:
       - .env
-
     volumes:
       - ./data:/app/data
-      - /var/run/docker.sock:/var/run/docker.sock:ro
       - /var/log:/host/var/log:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
 ```
+
+The Docker socket is a high-trust host boundary. Keep `ALLOWED_CONTAINERS` narrow and do not run the container as privileged.
 
 ---
 
@@ -305,12 +322,15 @@ services:
 [Unit]
 Description=ServerOps AI Bot
 After=docker.service
+Requires=docker.service
 
 [Service]
+Type=oneshot
 WorkingDirectory=/opt/serverops-ai-bot
-ExecStart=/usr/bin/docker compose up
+ExecStart=/usr/bin/docker compose up -d --build
 ExecStop=/usr/bin/docker compose down
-Restart=always
+RemainAfterExit=yes
+TimeoutStartSec=0
 
 [Install]
 WantedBy=multi-user.target

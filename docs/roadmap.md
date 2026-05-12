@@ -70,17 +70,17 @@ Checkpoint:
 
 ## Phase 5: Deployment
 
-- [ ] Add Dockerfile.
-- [ ] Add docker-compose.yml.
-- [ ] Add `.env.example`.
-- [ ] Add systemd service example.
-- [ ] Add basic health check or startup validation.
+- [x] Add Dockerfile.
+- [x] Add docker-compose.yml.
+- [x] Add `.env.example`.
+- [x] Add systemd service example.
+- [x] Add basic health check or startup validation.
 
 Checkpoint:
 
-- [ ] `docker compose up -d --build` starts the bot.
-- [ ] Persistent data is written under `data/`.
-- [ ] Deployment docs match actual files.
+- [ ] `docker compose up -d --build` starts the bot on a server with real `.env`.
+- [x] Persistent data is written under `data/`.
+- [x] Deployment docs match actual files.
 
 ## Later
 
