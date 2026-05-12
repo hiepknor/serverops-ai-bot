@@ -103,8 +103,9 @@ def test_unallowlisted_log_target_is_rejected_by_router() -> None:
 
 def test_openai_tool_definitions_are_strict_function_tools() -> None:
     definitions = openai_tool_definitions()
+    definitions_by_name = {definition["name"]: definition for definition in definitions}
 
-    assert {definition["name"] for definition in definitions} == {
+    assert set(definitions_by_name) == {
         "get_system_status",
         "read_log",
         "list_docker_containers",
@@ -116,3 +117,9 @@ def test_openai_tool_definitions_are_strict_function_tools() -> None:
         definition["parameters"]["additionalProperties"] is False
         for definition in definitions
     )
+    assert definitions_by_name["read_log"]["parameters"]["required"] == ["lines", "target"]
+    assert definitions_by_name["read_docker_logs"]["parameters"]["required"] == [
+        "container",
+        "lines",
+    ]
+    assert "default" not in definitions_by_name["read_log"]["parameters"]["properties"]["lines"]

@@ -77,8 +77,7 @@ def _tool_definition(
     description: str,
     model: type[ToolArguments],
 ) -> dict[str, Any]:
-    schema = model.model_json_schema()
-    schema["additionalProperties"] = False
+    schema = _strict_json_schema(model.model_json_schema())
     return {
         "type": "function",
         "name": name,
@@ -86,3 +85,26 @@ def _tool_definition(
         "parameters": schema,
         "strict": True,
     }
+
+
+def _strict_json_schema(schema: dict[str, Any]) -> dict[str, Any]:
+    strict_schema = dict(schema)
+    strict_schema.pop("default", None)
+
+    if strict_schema.get("type") == "object":
+        properties = strict_schema.get("properties", {})
+        strict_schema["additionalProperties"] = False
+        strict_schema["required"] = sorted(properties)
+        strict_schema["properties"] = {
+            name: _strict_json_schema(property_schema)
+            for name, property_schema in properties.items()
+        }
+
+    for key in ("anyOf", "oneOf", "allOf"):
+        if key in strict_schema:
+            strict_schema[key] = [_strict_json_schema(item) for item in strict_schema[key]]
+
+    if "items" in strict_schema and isinstance(strict_schema["items"], dict):
+        strict_schema["items"] = _strict_json_schema(strict_schema["items"])
+
+    return strict_schema
