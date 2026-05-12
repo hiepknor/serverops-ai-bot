@@ -110,20 +110,20 @@ Checkpoint:
 
 ## U7: Docker Socket Safety
 
-Status: planned
+Status: complete
 
-- [ ] Add `ENABLE_DOCKER_TOOLS=false` default or documented deployment default.
-- [ ] Gate `/docker`, `/docker_logs`, and Docker AI tools behind that setting.
-- [ ] Return safe Vietnamese disabled messages.
-- [ ] Document Docker socket risk and safer deployment options.
-- [ ] Evaluate Docker socket proxy allowlisting.
+- [x] Add `ENABLE_DOCKER_TOOLS=false` default or documented deployment default.
+- [x] Gate `/docker`, `/docker_logs`, and Docker AI tools behind that setting.
+- [x] Return safe Vietnamese disabled messages.
+- [x] Document Docker socket risk and safer deployment options.
+- [x] Evaluate Docker socket proxy allowlisting.
 
 Checkpoint:
 
-- [ ] Docker commands fail safely when disabled.
-- [ ] Docker commands work only when explicitly enabled and targets are allowlisted.
-- [ ] Tests cover enabled and disabled behavior.
-- [ ] Deployment docs explain the tradeoff clearly.
+- [x] Docker commands fail safely when disabled.
+- [x] Docker commands work only when explicitly enabled and targets are allowlisted.
+- [x] Tests cover enabled and disabled behavior.
+- [x] Deployment docs explain the tradeoff clearly.
 
 ## U8: Final README Production Review
 

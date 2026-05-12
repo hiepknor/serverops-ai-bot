@@ -4,6 +4,7 @@ from app.commands import readonly
 from app.commands.readonly import authorize_and_render, render_docker_logs, render_log
 from app.config import Settings
 from app.core.security import Permission, Role
+from app.tools.docker_tools import ContainerStatus
 from app.tools.system_tools import SystemSnapshot
 
 
@@ -73,9 +74,58 @@ def test_status_metric_renderers_are_specific(monkeypatch) -> None:
 
 
 def test_docker_logs_unlisted_container_is_access_denied() -> None:
-    response = render_docker_logs(make_settings(allowed_containers=["api"]), "db")
+    response = render_docker_logs(
+        make_settings(enable_docker_tools=True, allowed_containers=["api"]),
+        "db",
+    )
 
     assert response == "Từ chối truy cập Docker: 'db' is not allowlisted"
+
+
+def test_docker_command_is_disabled_by_default(monkeypatch) -> None:
+    called = False
+
+    def fake_list_containers(*, allowed_names):
+        nonlocal called
+        called = True
+        return []
+
+    monkeypatch.setattr(readonly, "list_containers", fake_list_containers)
+
+    response = readonly.render_docker(make_settings(allowed_containers=["api"]))
+
+    assert response == "Docker tools đang tắt. Đặt ENABLE_DOCKER_TOOLS=true để bật."
+    assert called is False
+
+
+def test_docker_command_works_when_explicitly_enabled(monkeypatch) -> None:
+    def fake_list_containers(*, allowed_names):
+        assert allowed_names == ["api"]
+        return [ContainerStatus(name="api", status="running")]
+
+    monkeypatch.setattr(readonly, "list_containers", fake_list_containers)
+
+    response = readonly.render_docker(
+        make_settings(enable_docker_tools=True, allowed_containers=["api"])
+    )
+
+    assert response == "Container Docker\n- api: running"
+
+
+def test_docker_logs_command_is_disabled_by_default(monkeypatch) -> None:
+    called = False
+
+    def fake_get_container_logs(*args, **kwargs):
+        nonlocal called
+        called = True
+        raise AssertionError("should not call Docker")
+
+    monkeypatch.setattr(readonly, "get_container_logs", fake_get_container_logs)
+
+    response = render_docker_logs(make_settings(allowed_containers=["api"]), "api")
+
+    assert response == "Docker tools đang tắt. Đặt ENABLE_DOCKER_TOOLS=true để bật."
+    assert called is False
 
 
 def test_english_language_keeps_user_messages_in_english() -> None:

@@ -153,6 +153,8 @@ def render_log(settings: Settings, target: str | None) -> str:
 
 
 def render_docker(settings: Settings) -> str:
+    if not settings.enable_docker_tools:
+        return message(settings, "docker_disabled")
     try:
         containers = list_containers(allowed_names=settings.allowed_containers)
     except DockerUnavailableError as exc:
@@ -168,6 +170,8 @@ def render_docker(settings: Settings) -> str:
 def render_docker_logs(settings: Settings, target: str | None) -> str:
     if not target:
         return message(settings, "usage_docker_logs")
+    if not settings.enable_docker_tools:
+        return message(settings, "docker_disabled")
     try:
         result = get_container_logs(
             target,

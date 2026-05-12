@@ -152,6 +152,47 @@ def test_ai_tool_allowlist_denial_creates_denied_audit_record(tmp_path) -> None:
     assert "'shadow' is not allowlisted" in rows[0]["error"]
 
 
+def test_ai_docker_tool_is_denied_when_docker_disabled_by_default(tmp_path) -> None:
+    audit = AuditStore(tmp_path / "serverops.db")
+
+    result = route_tool_call(
+        tool_name="list_docker_containers",
+        arguments={},
+        role=Role.VIEWER,
+        settings=make_settings(allowed_containers=["api"]),
+        audit=audit,
+        audit_context=make_audit_context(command="ask"),
+    )
+
+    rows = audit.list_recent()
+    assert result.ok is False
+    assert result.message == "Docker access denied."
+    assert result.error == "Docker tools are disabled."
+    assert rows[0]["action"] == "ai_tool.list_docker_containers"
+    assert rows[0]["result"] == "denied"
+
+
+def test_ai_docker_logs_tool_is_denied_when_docker_disabled_by_default(tmp_path) -> None:
+    audit = AuditStore(tmp_path / "serverops.db")
+
+    result = route_tool_call(
+        tool_name="read_docker_logs",
+        arguments={"container": "api", "lines": 20},
+        role=Role.VIEWER,
+        settings=make_settings(allowed_containers=["api"]),
+        audit=audit,
+        audit_context=make_audit_context(command="ask"),
+    )
+
+    rows = audit.list_recent()
+    assert result.ok is False
+    assert result.message == "Docker access denied."
+    assert result.error == "Docker tools are disabled."
+    assert rows[0]["action"] == "ai_tool.read_docker_logs"
+    assert rows[0]["target"] == "api"
+    assert rows[0]["result"] == "denied"
+
+
 def test_ai_tool_audit_error_is_sanitized(tmp_path) -> None:
     audit = AuditStore(tmp_path / "serverops.db")
 

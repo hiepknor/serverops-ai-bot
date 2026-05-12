@@ -16,6 +16,7 @@ def test_settings_parse_csv_roles_and_allowlists(monkeypatch: pytest.MonkeyPatch
     monkeypatch.setenv("LOG_LEVEL", "debug")
     monkeypatch.setenv("BOT_LANGUAGE", "vi")
     monkeypatch.setenv("SERVEROPS_INIT_ONLY", "true")
+    monkeypatch.setenv("ENABLE_DOCKER_TOOLS", "true")
     monkeypatch.setenv("ENABLE_ALERTS", "true")
     monkeypatch.setenv("ALERT_INTERVAL_SECONDS", "120")
     monkeypatch.setenv("ALERT_COOLDOWN_SECONDS", "600")
@@ -33,6 +34,7 @@ def test_settings_parse_csv_roles_and_allowlists(monkeypatch: pytest.MonkeyPatch
     assert settings.log_level == "DEBUG"
     assert settings.bot_language == "vi"
     assert settings.serverops_init_only is True
+    assert settings.enable_docker_tools is True
     assert settings.enable_alerts is True
     assert settings.alert_interval_seconds == 120
     assert settings.alert_cooldown_seconds == 600
@@ -59,3 +61,13 @@ def test_settings_require_owner_ids(monkeypatch: pytest.MonkeyPatch) -> None:
 
     with pytest.raises(ValidationError):
         Settings(_env_file=None)
+
+
+def test_docker_tools_are_disabled_by_default() -> None:
+    settings = Settings(
+        telegram_bot_token="123456:telegram-token-value",
+        openai_api_key="sk-testtokenvalue",
+        owner_ids=[1],
+    )
+
+    assert settings.enable_docker_tools is False

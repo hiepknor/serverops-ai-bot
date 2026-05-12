@@ -85,13 +85,34 @@ def test_request_confirmation_denies_unallowlisted_target(tmp_path) -> None:
         permission=Permission.RESTART_CONTAINER,
         action="restart_container",
         target="db",
-        settings=make_settings(),
+        settings=make_settings(enable_docker_tools=True),
         confirmations=confirmations,
         audit=audit,
     )
 
     assert response == "Từ chối truy cập. 'db' is not allowlisted"
     assert audit.list_recent()[0]["error"] == "'db' is not allowlisted"
+
+
+def test_request_confirmation_denies_container_restart_when_docker_disabled(tmp_path) -> None:
+    database_path = tmp_path / "serverops.db"
+    confirmations = ConfirmationStore(database_path)
+    audit = AuditStore(database_path)
+
+    response = request_confirmation(
+        user_id=1,
+        role=Role.OWNER,
+        permission=Permission.RESTART_CONTAINER,
+        action="restart_container",
+        target="api",
+        settings=make_settings(enable_docker_tools=False),
+        confirmations=confirmations,
+        audit=audit,
+    )
+
+    assert response == "Từ chối truy cập. Docker tools are disabled."
+    assert audit.list_recent()[0]["result"] == "denied"
+    assert audit.list_recent()[0]["error"] == "Docker tools are disabled."
 
 
 def test_confirmation_table_is_created_in_same_database_as_audit(tmp_path) -> None:
@@ -135,8 +156,30 @@ def test_execute_confirmed_restart_container_calls_docker_tool(monkeypatch) -> N
 
     monkeypatch.setattr(actions, "restart_container", fake_restart_container)
 
-    result = execute_confirmed_action("restart_container", "api", make_settings())
+    result = execute_confirmed_action(
+        "restart_container",
+        "api",
+        make_settings(enable_docker_tools=True),
+    )
 
     assert result.ok is True
     assert result.message == "Đã khởi động lại container: api"
     assert calls == [("api", ["api"])]
+
+
+def test_execute_confirmed_restart_container_fails_when_docker_disabled(monkeypatch) -> None:
+    called = False
+
+    def fake_restart_container(target, *, allowed_names):
+        nonlocal called
+        called = True
+        return f"Container restarted: {target}"
+
+    monkeypatch.setattr(actions, "restart_container", fake_restart_container)
+
+    result = execute_confirmed_action("restart_container", "api", make_settings())
+
+    assert result.ok is False
+    assert result.message == "Docker tools đang tắt. Đặt ENABLE_DOCKER_TOOLS=true để bật."
+    assert result.error == "Docker tools are disabled."
+    assert called is False

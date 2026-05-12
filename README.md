@@ -278,6 +278,7 @@ DATABASE_URL=sqlite:///data/serverops.db
 
 LOG_LEVEL=INFO
 BOT_LANGUAGE=vi
+ENABLE_DOCKER_TOOLS=false
 ENABLE_ALERTS=false
 ALERT_INTERVAL_SECONDS=60
 ALERT_COOLDOWN_SECONDS=900
@@ -297,6 +298,10 @@ names, targets, and confirmation text stay machine-stable.
 `ENABLE_ALERTS=false` keeps scheduled alerts disabled by default. Set it to `true`
 only when owner IDs and thresholds are configured; alerts are read-only and notify
 `OWNER_IDS` only.
+
+`ENABLE_DOCKER_TOOLS=false` keeps `/docker`, `/docker_logs`, `/docker_restart`, and
+Docker AI tools disabled by default. Set it to `true` only when you accept Docker
+socket exposure and have narrow `ALLOWED_CONTAINERS`.
 
 ---
 
@@ -355,7 +360,11 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
 ```
 
-The Docker socket is a high-trust host boundary. Keep `ALLOWED_CONTAINERS` narrow and do not run the container as privileged.
+The Docker socket is a high-trust host boundary even when mounted read-only.
+Prefer running without the socket unless Docker commands are required. If you do
+mount it, keep `ENABLE_DOCKER_TOOLS=false` until explicitly needed, keep
+`ALLOWED_CONTAINERS` narrow, do not run the container as privileged, and consider
+a Docker socket proxy that allowlists only the endpoints this bot needs.
 
 ---
 

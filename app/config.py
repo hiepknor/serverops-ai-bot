@@ -44,6 +44,7 @@ class Settings(BaseSettings):
     bot_language: str = "vi"
     serverops_init_only: bool = False
     log_tail_lines: int = Field(default=200, ge=1, le=1000)
+    enable_docker_tools: bool = False
     docker_log_tail_lines: int = Field(default=200, ge=1, le=1000)
     enable_alerts: bool = False
     alert_interval_seconds: int = Field(default=60, ge=10, le=86400)

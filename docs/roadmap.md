@@ -95,7 +95,7 @@ Checkpoint:
 - Mocked full AI loop tests. (done; see `upgrade-roadmap.md`)
 - Owner `/audit` command. (done; see `upgrade-roadmap.md`)
 - Dependency locking. (done; see `upgrade-roadmap.md`)
-- Docker socket safety hardening.
+- Docker socket safety hardening. (done; see `upgrade-roadmap.md`)
 - Final README review and production-use documentation cleanup.
 - Multi-server support.
 - Web dashboard.

@@ -163,6 +163,13 @@ def _read_log(arguments: ToolArguments, settings: Settings) -> ToolResult:
 
 
 def _list_docker_containers(settings: Settings) -> ToolResult:
+    if not settings.enable_docker_tools:
+        return ToolResult(
+            ok=False,
+            tool_name="list_docker_containers",
+            message="Docker access denied.",
+            error="Docker tools are disabled.",
+        )
     try:
         containers = list_containers(allowed_names=settings.allowed_containers)
     except DockerUnavailableError as exc:
@@ -183,6 +190,13 @@ def _list_docker_containers(settings: Settings) -> ToolResult:
 def _read_docker_logs(arguments: ToolArguments, settings: Settings) -> ToolResult:
     if not isinstance(arguments, ReadDockerLogsArguments):
         raise ToolCallRejected("read_docker_logs arguments were not validated")
+    if not settings.enable_docker_tools:
+        return ToolResult(
+            ok=False,
+            tool_name="read_docker_logs",
+            message="Docker access denied.",
+            error="Docker tools are disabled.",
+        )
     try:
         result = get_container_logs(
             arguments.container,

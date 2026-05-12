@@ -81,6 +81,12 @@ def execute_confirmed_action(action: str, target: str, settings: Settings) -> Ac
             restart_service(target, allowed_services=settings.allowed_services)
             result_message = message(settings, "action_service_restarted", target=target)
         elif action == "restart_container":
+            if not settings.enable_docker_tools:
+                return ActionResult(
+                    ok=False,
+                    message=message(settings, "docker_disabled"),
+                    error="Docker tools are disabled.",
+                )
             restart_container(target, allowed_names=settings.allowed_containers)
             result_message = message(settings, "action_container_restarted", target=target)
         else:
@@ -205,6 +211,8 @@ def request_confirmation(
 def _validate_target(action: str, target: str, settings: Settings) -> str | None:
     if action == "restart_service" and target not in set(settings.allowed_services):
         return f"{target!r} is not allowlisted"
+    if action == "restart_container" and not settings.enable_docker_tools:
+        return "Docker tools are disabled."
     if action == "restart_container" and target not in set(settings.allowed_containers):
         return f"{target!r} is not allowlisted"
     return None

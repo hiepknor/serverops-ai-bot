@@ -75,9 +75,16 @@ make docker-down
 
 - `./data:/app/data` for SQLite and runtime state.
 - `/var/log:/host/var/log:ro` for allowlisted log reads.
-- `/var/run/docker.sock:/var/run/docker.sock:ro` for Docker SDK inspection.
+- `/var/run/docker.sock:/var/run/docker.sock:ro` for Docker SDK inspection when Docker tools are explicitly enabled.
 
-The Docker socket is a high-trust host boundary even when mounted read-only. Keep `ALLOWED_CONTAINERS` narrow and do not run the container as privileged.
+Docker commands and Docker AI tools are disabled by default with
+`ENABLE_DOCKER_TOOLS=false`. Set `ENABLE_DOCKER_TOOLS=true` only after accepting
+Docker socket exposure and configuring narrow `ALLOWED_CONTAINERS`.
+
+The Docker socket is a high-trust host boundary even when mounted read-only. Do
+not run the container as privileged. For production, prefer no socket mount when
+Docker commands are not needed, or evaluate a Docker socket proxy that allowlists
+only the required read/log/restart endpoints.
 
 ## Safety Defaults
 
