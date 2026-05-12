@@ -2,7 +2,12 @@ from __future__ import annotations
 
 import pytest
 
-from app.tools.docker_tools import DockerAccessError, get_container_logs, list_containers
+from app.tools.docker_tools import (
+    DockerAccessError,
+    get_container_logs,
+    list_containers,
+    restart_container,
+)
 
 
 class FakeContainer:
@@ -14,6 +19,9 @@ class FakeContainer:
     def logs(self, tail: int) -> bytes:
         del tail
         return self._logs
+
+    def restart(self) -> None:
+        self.status = "restarted"
 
 
 class FakeContainers:
@@ -74,3 +82,18 @@ def test_get_container_logs_requires_allowlist_and_redacts() -> None:
 def test_get_container_logs_rejects_unlisted_container() -> None:
     with pytest.raises(DockerAccessError):
         get_container_logs("db", allowed_names=["api"], line_limit=200, client=FakeClient([]))
+
+
+def test_restart_container_requires_allowlist_and_restarts() -> None:
+    container = FakeContainer("api", "running")
+    client = FakeClient([container])
+
+    message = restart_container("api", allowed_names=["api"], client=client)
+
+    assert message == "Container restarted: api"
+    assert container.status == "restarted"
+
+
+def test_restart_container_rejects_unlisted_container() -> None:
+    with pytest.raises(DockerAccessError):
+        restart_container("db", allowed_names=["api"], client=FakeClient([]))

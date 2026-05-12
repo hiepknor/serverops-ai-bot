@@ -22,7 +22,7 @@ Build a safe Telegram operations assistant for one Linux server or VPS. The bot 
 - System status commands: `/status`, `/health`, `/cpu`, `/ram`, `/disk`, `/uptime`.
 - Log commands: `/log <service>`, `/errors`, `/nginx_errors`.
 - Docker read commands: `/docker`, `/docker_logs <container>`.
-- Allowlisted restart command: `/restart <service>`.
+- Allowlisted restart commands: `/restart <service>`, `/docker_restart <container>`.
 - OpenAI Responses API integration for log and incident summarization.
 - Tool router that validates every AI tool call before execution.
 - Confirmation flow for dangerous actions.
@@ -89,6 +89,17 @@ Each Telegram command should:
 4. Call an application service or tool wrapper.
 5. Write audit records for privileged or sensitive actions.
 6. Return concise text suitable for mobile incident response.
+
+### Confirmation Contract
+
+Dangerous actions do not execute on the first command. They create a pending confirmation and require the same Telegram user to reply with exact text:
+
+```txt
+CONFIRM RESTART SERVICE NGINX
+CONFIRM RESTART CONTAINER API
+```
+
+The confirmation record and audit records must be stored in SQLite before and after execution.
 
 ### Tool Execution Contract
 

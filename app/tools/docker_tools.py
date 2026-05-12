@@ -86,6 +86,25 @@ def get_container_logs(
     )
 
 
+def restart_container(
+    name: str,
+    *,
+    allowed_names: list[str],
+    client: Any | None = None,
+) -> str:
+    if name not in set(allowed_names):
+        raise DockerAccessError(f"{name!r} is not allowlisted")
+
+    docker_client = client or _client_from_env()
+    try:
+        container = docker_client.containers.get(name)
+        container.restart()
+    except (DockerException, NotFound) as exc:
+        raise DockerUnavailableError(str(exc)) from exc
+    return f"Container restarted: {name}"
+
+
+
 def _client_from_env() -> Any:
     try:
         return docker.from_env()

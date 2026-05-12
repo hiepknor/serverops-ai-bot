@@ -44,16 +44,16 @@ Checkpoint:
 
 ## Phase 3: Controlled Actions
 
-- [ ] Implement confirmation store and confirmation text matching.
-- [ ] Implement `/restart <service>` for allowlisted services.
-- [ ] Implement `/docker-restart <container>` for allowlisted containers.
-- [ ] Audit every privileged action.
+- [x] Implement confirmation store and confirmation text matching.
+- [x] Implement `/restart <service>` for allowlisted services.
+- [x] Implement `/docker_restart <container>` for allowlisted containers.
+- [x] Audit every privileged action.
 
 Checkpoint:
 
-- [ ] Non-allowlisted targets are rejected.
-- [ ] Dangerous actions require confirmation.
-- [ ] Audit records include user, role, action, target, result, and confirmation status.
+- [x] Non-allowlisted targets are rejected.
+- [x] Dangerous actions require confirmation.
+- [x] Audit records include user, role, action, target, result, and confirmation status.
 
 ## Phase 4: AI Assistant
 

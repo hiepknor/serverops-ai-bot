@@ -56,7 +56,7 @@ Powered by:
 ```txt
 /docker
 /docker_logs <container>
-/docker-restart <container>
+/docker_restart <container>
 ```
 
 ### Logs
@@ -383,6 +383,30 @@ health
 ---
 
 # ⚠ Dangerous Actions Require Confirmation
+
+Restart actions require exact confirmation text.
+
+Example:
+
+```txt
+/restart nginx
+```
+
+Bot:
+
+```txt
+Confirmation required.
+Action: restart_service
+Target: nginx
+Reply exactly:
+CONFIRM RESTART SERVICE NGINX
+```
+
+Docker restart uses the Telegram-compatible command name:
+
+```txt
+/docker_restart api
+```
 
 Example:
 

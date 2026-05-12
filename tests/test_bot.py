@@ -31,5 +31,9 @@ def test_build_application_registers_readonly_commands() -> None:
         "nginx_errors",
         "docker",
         "docker_logs",
+        "restart",
+        "docker_restart",
     }.issubset(registered)
     assert application.bot_data["settings"] is settings
+    assert "audit" in application.bot_data
+    assert "confirmations" in application.bot_data

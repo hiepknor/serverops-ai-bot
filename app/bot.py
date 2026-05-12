@@ -1,7 +1,12 @@
 from __future__ import annotations
 
-from telegram.ext import Application, CommandHandler
+from telegram.ext import Application, CommandHandler, MessageHandler, filters
 
+from app.commands.actions import (
+    confirmation_text_handler,
+    docker_restart_command,
+    restart_command,
+)
 from app.commands.readonly import (
     cpu_command,
     disk_command,
@@ -16,20 +21,37 @@ from app.commands.readonly import (
     uptime_command,
 )
 from app.config import Settings
+from app.core.audit import AuditStore
+from app.core.confirmations import ConfirmationStore
 
 
-def build_application(settings: Settings) -> Application:
+def build_application(
+    settings: Settings,
+    *,
+    audit: AuditStore | None = None,
+    confirmations: ConfirmationStore | None = None,
+) -> Application:
     application = (
         Application.builder()
         .token(settings.telegram_bot_token.get_secret_value())
         .build()
     )
-    register_handlers(application, settings)
+    register_handlers(application, settings, audit=audit, confirmations=confirmations)
     return application
 
 
-def register_handlers(application: Application, settings: Settings) -> None:
+def register_handlers(
+    application: Application,
+    settings: Settings,
+    *,
+    audit: AuditStore | None = None,
+    confirmations: ConfirmationStore | None = None,
+) -> None:
     application.bot_data["settings"] = settings
+    application.bot_data["audit"] = audit or AuditStore.from_database_url(settings.database_url)
+    application.bot_data["confirmations"] = confirmations or ConfirmationStore.from_database_url(
+        settings.database_url
+    )
     application.add_handler(CommandHandler("status", status_command))
     application.add_handler(CommandHandler("health", health_command))
     application.add_handler(CommandHandler("cpu", cpu_command))
@@ -41,6 +63,11 @@ def register_handlers(application: Application, settings: Settings) -> None:
     application.add_handler(CommandHandler("nginx_errors", nginx_errors_command))
     application.add_handler(CommandHandler("docker", docker_command))
     application.add_handler(CommandHandler("docker_logs", docker_logs_command))
+    application.add_handler(CommandHandler("restart", restart_command))
+    application.add_handler(CommandHandler("docker_restart", docker_restart_command))
+    application.add_handler(
+        MessageHandler(filters.TEXT & ~filters.COMMAND, confirmation_text_handler)
+    )
 
 
 def run_polling(settings: Settings) -> None:
