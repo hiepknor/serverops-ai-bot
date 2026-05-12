@@ -125,6 +125,27 @@ Checkpoint:
 - [ ] Tests cover enabled and disabled behavior.
 - [ ] Deployment docs explain the tradeoff clearly.
 
+## U8: Final README Production Review
+
+Status: planned
+
+- [ ] Review `README.md` against the implemented command set and actual files.
+- [ ] Remove or clearly mark planned-but-not-implemented features.
+- [ ] Normalize setup, `.env`, Docker Compose, systemd, and Makefile instructions.
+- [ ] Document all supported Telegram commands with role requirements.
+- [ ] Document security boundaries, confirmation behavior, audit behavior, and alert behavior.
+- [ ] Add a concise production runbook for install, start, update, rollback, and log inspection.
+- [ ] Add troubleshooting notes for Telegram, OpenAI, Docker socket, SQLite data, and permissions.
+- [ ] Confirm examples use Vietnamese-first user-facing behavior where applicable.
+
+Checkpoint:
+
+- [ ] README matches actual code behavior.
+- [ ] A new operator can configure `.env` safely from `.env.example`.
+- [ ] Production startup steps are accurate for Docker Compose and systemd.
+- [ ] Security warnings are explicit and not buried.
+- [ ] Verification commands in README pass on a clean checkout.
+
 ## Production Readiness Gate
 
 Before treating the bot as production-ready:
@@ -137,3 +158,4 @@ Before treating the bot as production-ready:
 - [ ] No `.env`, tokens, SQLite DBs, logs, or runtime artifacts are committed.
 - [ ] Docker socket exposure is explicitly accepted or mitigated.
 - [ ] Scheduled alerts are explicitly enabled and tested on the real server.
+- [ ] README has passed final production-use review and cleanup.

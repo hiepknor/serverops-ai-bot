@@ -96,6 +96,7 @@ Checkpoint:
 - Owner `/audit` command.
 - Dependency locking.
 - Docker socket safety hardening.
+- Final README review and production-use documentation cleanup.
 - Multi-server support.
 - Web dashboard.
 - Metrics history.
