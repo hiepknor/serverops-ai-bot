@@ -5,23 +5,23 @@ Use it together with `docs/specs/upgrades.md`.
 
 ## U1: Scheduled Read-Only Alerts
 
-Status: planned
+Status: complete
 
-- [ ] Add alert configuration: `ENABLE_ALERTS`, interval, cooldown, CPU/RAM/disk thresholds.
-- [ ] Add read-only threshold evaluator for system snapshots.
-- [ ] Add scheduler startup wiring with alerts disabled by default.
-- [ ] Send Vietnamese Telegram alerts to `OWNER_IDS` only.
-- [ ] Add cooldown/dedup state to avoid repeated spam.
-- [ ] Record emitted alerts in audit or alert history.
-- [ ] Add safe command suggestions to alert text.
+- [x] Add alert configuration: `ENABLE_ALERTS`, interval, cooldown, CPU/RAM/disk thresholds.
+- [x] Add read-only threshold evaluator for system snapshots.
+- [x] Add scheduler startup wiring with alerts disabled by default.
+- [x] Send Vietnamese Telegram alerts to `OWNER_IDS` only.
+- [x] Add cooldown/dedup state to avoid repeated spam.
+- [x] Record emitted alerts in audit or alert history.
+- [x] Add safe command suggestions to alert text.
 
 Checkpoint:
 
-- [ ] Disabled alerts do not register scheduler jobs.
-- [ ] CPU/RAM/disk threshold alerts are tested with mocked snapshots.
-- [ ] Owner routing is tested with fake Telegram sends.
-- [ ] Repeated same alert respects cooldown.
-- [ ] Alert checks perform no host mutation.
+- [x] Disabled alerts do not register scheduler jobs.
+- [x] CPU/RAM/disk threshold alerts are tested with mocked snapshots.
+- [x] Owner routing is tested with fake Telegram sends.
+- [x] Repeated same alert respects cooldown.
+- [x] Alert checks perform no host mutation.
 
 ## U2: AI Command Flow
 

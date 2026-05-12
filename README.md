@@ -266,6 +266,13 @@ DATABASE_URL=sqlite:///data/serverops.db
 
 LOG_LEVEL=INFO
 BOT_LANGUAGE=vi
+ENABLE_ALERTS=false
+ALERT_INTERVAL_SECONDS=60
+ALERT_COOLDOWN_SECONDS=900
+ALERT_CPU_PERCENT=90
+ALERT_RAM_PERCENT=90
+ALERT_DISK_PERCENT=90
+ALERT_DOCKER_ENABLED=false
 
 ALLOWED_CONTAINERS=nginx,api
 ALLOWED_LOG_FILES=nginx_errors:/host/var/log/nginx/error.log
@@ -274,6 +281,10 @@ ALLOWED_LOG_FILES=nginx_errors:/host/var/log/nginx/error.log
 `BOT_LANGUAGE=vi` makes Telegram user-facing messages and AI responses Vietnamese by default.
 Use `BOT_LANGUAGE=en` only if you want English responses. Command names, audit action IDs, tool
 names, targets, and confirmation text stay machine-stable.
+
+`ENABLE_ALERTS=false` keeps scheduled alerts disabled by default. Set it to `true`
+only when owner IDs and thresholds are configured; alerts are read-only and notify
+`OWNER_IDS` only.
 
 ---
 

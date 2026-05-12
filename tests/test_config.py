@@ -16,6 +16,13 @@ def test_settings_parse_csv_roles_and_allowlists(monkeypatch: pytest.MonkeyPatch
     monkeypatch.setenv("LOG_LEVEL", "debug")
     monkeypatch.setenv("BOT_LANGUAGE", "vi")
     monkeypatch.setenv("SERVEROPS_INIT_ONLY", "true")
+    monkeypatch.setenv("ENABLE_ALERTS", "true")
+    monkeypatch.setenv("ALERT_INTERVAL_SECONDS", "120")
+    monkeypatch.setenv("ALERT_COOLDOWN_SECONDS", "600")
+    monkeypatch.setenv("ALERT_CPU_PERCENT", "80")
+    monkeypatch.setenv("ALERT_RAM_PERCENT", "81")
+    monkeypatch.setenv("ALERT_DISK_PERCENT", "82")
+    monkeypatch.setenv("ALERT_DOCKER_ENABLED", "false")
 
     settings = Settings(_env_file=None)
 
@@ -26,6 +33,13 @@ def test_settings_parse_csv_roles_and_allowlists(monkeypatch: pytest.MonkeyPatch
     assert settings.log_level == "DEBUG"
     assert settings.bot_language == "vi"
     assert settings.serverops_init_only is True
+    assert settings.enable_alerts is True
+    assert settings.alert_interval_seconds == 120
+    assert settings.alert_cooldown_seconds == 600
+    assert settings.alert_cpu_percent == 80
+    assert settings.alert_ram_percent == 81
+    assert settings.alert_disk_percent == 82
+    assert settings.alert_docker_enabled is False
 
 
 def test_settings_reject_unknown_bot_language(monkeypatch: pytest.MonkeyPatch) -> None:

@@ -89,7 +89,7 @@ Checkpoint:
 
 ## Later
 
-- Scheduled read-only alerts to owners.
+- Scheduled read-only alerts to owners. (done; see `upgrade-roadmap.md`)
 - AI command flow for `/ask`, `/summarize_log`, and `/incident`.
 - AI tool call audit.
 - Mocked full AI loop tests.

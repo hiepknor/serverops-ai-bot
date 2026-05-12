@@ -45,6 +45,13 @@ class Settings(BaseSettings):
     serverops_init_only: bool = False
     log_tail_lines: int = Field(default=200, ge=1, le=1000)
     docker_log_tail_lines: int = Field(default=200, ge=1, le=1000)
+    enable_alerts: bool = False
+    alert_interval_seconds: int = Field(default=60, ge=10, le=86400)
+    alert_cooldown_seconds: int = Field(default=900, ge=60, le=86400)
+    alert_cpu_percent: float = Field(default=90.0, ge=1.0, le=100.0)
+    alert_ram_percent: float = Field(default=90.0, ge=1.0, le=100.0)
+    alert_disk_percent: float = Field(default=90.0, ge=1.0, le=100.0)
+    alert_docker_enabled: bool = False
 
     allowed_services: Annotated[list[str], NoDecode] = Field(default_factory=list)
     allowed_containers: Annotated[list[str], NoDecode] = Field(default_factory=list)

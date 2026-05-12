@@ -24,6 +24,8 @@ OWNER_IDS=
 
 `OWNER_IDS`, `ADMIN_IDS`, `VIEWER_IDS`, and allowlists accept comma-separated values.
 `BOT_LANGUAGE` accepts `vi` or `en`; the default is `vi`.
+Alerts are disabled by default. Set `ENABLE_ALERTS=true` plus CPU/RAM/disk
+thresholds when you want owner-only scheduled notifications.
 
 For one-shot startup validation without connecting to Telegram:
 

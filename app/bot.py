@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from telegram.ext import Application, CommandHandler, MessageHandler, filters
 
+from app.alerts.scheduler import register_alert_jobs
 from app.commands.actions import (
     confirmation_text_handler,
     docker_restart_command,
@@ -48,10 +49,12 @@ def register_handlers(
     confirmations: ConfirmationStore | None = None,
 ) -> None:
     application.bot_data["settings"] = settings
-    application.bot_data["audit"] = audit or AuditStore.from_database_url(settings.database_url)
+    audit_store = audit or AuditStore.from_database_url(settings.database_url)
+    application.bot_data["audit"] = audit_store
     application.bot_data["confirmations"] = confirmations or ConfirmationStore.from_database_url(
         settings.database_url
     )
+    register_alert_jobs(application, settings, audit_store)
     application.add_handler(CommandHandler("status", status_command))
     application.add_handler(CommandHandler("health", health_command))
     application.add_handler(CommandHandler("cpu", cpu_command))
