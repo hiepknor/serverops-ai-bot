@@ -78,7 +78,10 @@ Checkpoint:
 
 Checkpoint:
 
-- [ ] `docker compose up -d --build` starts the bot on a server with real `.env`.
+- [x] Docker image builds successfully.
+- [x] Container smoke check initializes SQLite audit DB with `SERVEROPS_INIT_ONLY=true`.
+- [x] `docker compose config` and `docker compose build` pass with a temporary `.env`.
+- [ ] `docker compose up -d --build` starts the bot on a server with real Telegram/OpenAI credentials.
 - [x] Persistent data is written under `data/`.
 - [x] Deployment docs match actual files.
 
