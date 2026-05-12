@@ -41,6 +41,9 @@ class Settings(BaseSettings):
 
     database_url: str = "sqlite:///data/serverops.db"
     log_level: str = "INFO"
+    serverops_init_only: bool = False
+    log_tail_lines: int = Field(default=200, ge=1, le=1000)
+    docker_log_tail_lines: int = Field(default=200, ge=1, le=1000)
 
     allowed_services: Annotated[list[str], NoDecode] = Field(default_factory=list)
     allowed_containers: Annotated[list[str], NoDecode] = Field(default_factory=list)

@@ -14,6 +14,7 @@ def test_settings_parse_csv_roles_and_allowlists(monkeypatch: pytest.MonkeyPatch
     monkeypatch.setenv("VIEWER_IDS", "")
     monkeypatch.setenv("ALLOWED_SERVICES", "nginx, docker")
     monkeypatch.setenv("LOG_LEVEL", "debug")
+    monkeypatch.setenv("SERVEROPS_INIT_ONLY", "true")
 
     settings = Settings()
 
@@ -22,6 +23,7 @@ def test_settings_parse_csv_roles_and_allowlists(monkeypatch: pytest.MonkeyPatch
     assert settings.viewer_ids == []
     assert settings.allowed_services == ["nginx", "docker"]
     assert settings.log_level == "DEBUG"
+    assert settings.serverops_init_only is True
 
 
 def test_settings_require_owner_ids(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -31,4 +33,3 @@ def test_settings_require_owner_ids(monkeypatch: pytest.MonkeyPatch) -> None:
 
     with pytest.raises(ValidationError):
         Settings()
-

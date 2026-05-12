@@ -55,7 +55,7 @@ Powered by:
 
 ```txt
 /docker
-/docker-logs <container>
+/docker_logs <container>
 /docker-restart <container>
 ```
 
@@ -64,7 +64,7 @@ Powered by:
 ```txt
 /log <service>
 /errors
-/nginx-errors
+/nginx_errors
 ```
 
 ### Deployment

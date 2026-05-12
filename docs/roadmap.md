@@ -31,16 +31,16 @@ Checkpoint:
 
 ## Phase 2: Read-Only Operations
 
-- [ ] Add Telegram bot startup and command registration.
-- [ ] Implement `/status`, `/health`, `/cpu`, `/ram`, `/disk`, `/uptime`.
-- [ ] Implement allowlisted log reads: `/log <service>`, `/errors`, `/nginx-errors`.
-- [ ] Implement Docker read status: `/docker`, `/docker-logs <container>`.
+- [x] Add Telegram bot startup and command registration.
+- [x] Implement `/status`, `/health`, `/cpu`, `/ram`, `/disk`, `/uptime`.
+- [x] Implement allowlisted log reads: `/log <service>`, `/errors`, `/nginx_errors`.
+- [x] Implement Docker read status: `/docker`, `/docker_logs <container>`.
 
 Checkpoint:
 
-- [ ] Viewer can use read-only commands.
-- [ ] Unknown users are denied.
-- [ ] Log output is capped and sanitized.
+- [x] Viewer can use read-only commands.
+- [x] Unknown users are denied.
+- [x] Log output is capped and sanitized.
 
 ## Phase 3: Controlled Actions
 

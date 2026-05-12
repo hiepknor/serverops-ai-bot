@@ -20,8 +20,8 @@ Build a safe Telegram operations assistant for one Linux server or VPS. The bot 
 - SQLite audit log.
 - Structured logging.
 - System status commands: `/status`, `/health`, `/cpu`, `/ram`, `/disk`, `/uptime`.
-- Log commands: `/log <service>`, `/errors`, `/nginx-errors`.
-- Docker read commands: `/docker`, `/docker-logs <container>`.
+- Log commands: `/log <service>`, `/errors`, `/nginx_errors`.
+- Docker read commands: `/docker`, `/docker_logs <container>`.
 - Allowlisted restart command: `/restart <service>`.
 - OpenAI Responses API integration for log and incident summarization.
 - Tool router that validates every AI tool call before execution.

@@ -24,6 +24,12 @@ OWNER_IDS=
 
 `OWNER_IDS`, `ADMIN_IDS`, `VIEWER_IDS`, and allowlists accept comma-separated values.
 
+For one-shot startup validation without connecting to Telegram:
+
+```bash
+SERVEROPS_INIT_ONLY=true .venv/bin/python -m app.main
+```
+
 ## Commands
 
 ```bash
@@ -39,4 +45,3 @@ OWNER_IDS=
 - `.env`, `.venv`, `data/`, logs, and SQLite files are gitignored.
 - Missing required config fails fast.
 - Tests use local/mocked boundaries by default.
-
