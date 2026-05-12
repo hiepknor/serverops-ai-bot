@@ -5,8 +5,15 @@
 ```bash
 python3 -m venv .venv
 .venv/bin/python -m pip install --upgrade pip
-.venv/bin/python -m pip install -e '.[dev]'
+.venv/bin/python -m pip install -r requirements-dev.lock
+.venv/bin/python -m pip install --no-deps -e .
 ```
+
+Dependencies are pinned with `pip-tools`.
+
+- `requirements.lock` pins runtime dependencies for Docker.
+- `requirements-dev.lock` pins runtime plus local test/lint tooling.
+- Run `make lock` after changing dependency ranges in `pyproject.toml`.
 
 ## Configuration
 
@@ -47,6 +54,7 @@ Equivalent Make targets:
 
 ```bash
 make install
+make lock
 make check
 make run
 ```

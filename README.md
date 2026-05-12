@@ -300,6 +300,21 @@ only when owner IDs and thresholds are configured; alerts are read-only and noti
 
 ---
 
+# 🧪 Local Development
+
+```bash
+make install
+make check
+```
+
+Dependencies are pinned with `pip-tools`:
+
+* `requirements.lock` is the runtime lock used by Docker.
+* `requirements-dev.lock` is the local development lock.
+* After changing dependency ranges in `pyproject.toml`, run `make lock`.
+
+---
+
 # 🐳 Docker Deployment
 
 ## Build & Run

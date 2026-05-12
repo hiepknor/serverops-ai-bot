@@ -94,19 +94,19 @@ Checkpoint:
 
 ## U6: Dependency Locking
 
-Status: planned
+Status: complete
 
-- [ ] Choose one lock strategy: `uv` or `pip-tools`.
-- [ ] Generate and commit the lock file.
-- [ ] Update local setup docs.
-- [ ] Update Dockerfile to install from locked dependencies.
-- [ ] Document dependency update workflow.
+- [x] Choose one lock strategy: `uv` or `pip-tools`.
+- [x] Generate and commit the lock file.
+- [x] Update local setup docs.
+- [x] Update Dockerfile to install from locked dependencies.
+- [x] Document dependency update workflow.
 
 Checkpoint:
 
-- [ ] Local install and Docker build use the same locked dependency set.
-- [ ] `pytest`, `ruff`, Docker build, and init-only smoke checks pass from a clean environment.
-- [ ] Dependency update process is documented.
+- [x] Local install and Docker build use the same locked dependency set.
+- [x] `pytest`, `ruff`, Docker build, and init-only smoke checks pass from a clean environment.
+- [x] Dependency update process is documented.
 
 ## U7: Docker Socket Safety
 

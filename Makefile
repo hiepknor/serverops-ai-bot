@@ -4,12 +4,13 @@ VENV_PYTHON := $(VENV)/bin/python
 COMPOSE ?= docker compose
 IMAGE ?= serverops-ai-bot:latest
 
-.PHONY: help venv install test lint check run init-only docker-build docker-up docker-down docker-logs docker-ps docker-check deploy clean
+.PHONY: help venv install lock test lint check run init-only docker-build docker-up docker-down docker-logs docker-ps docker-check deploy clean
 
 help:
 	@printf '%s\n' \
 		'Targets:' \
 		'  make install       Create .venv and install dev dependencies' \
+		'  make lock          Regenerate pinned dependency lock files' \
 		'  make test          Run pytest' \
 		'  make lint          Run ruff' \
 		'  make check         Run test, lint, and init-only smoke check' \
@@ -27,7 +28,13 @@ venv:
 	$(VENV_PYTHON) -m pip install --upgrade pip
 
 install: venv
-	$(VENV_PYTHON) -m pip install -e '.[dev]'
+	$(VENV_PYTHON) -m pip install -r requirements-dev.lock
+	$(VENV_PYTHON) -m pip install --no-deps -e .
+
+lock: venv
+	$(VENV_PYTHON) -m pip install 'pip-tools>=7.0'
+	$(VENV_PYTHON) -m piptools compile --strip-extras --output-file requirements.lock pyproject.toml
+	$(VENV_PYTHON) -m piptools compile --extra dev --strip-extras --output-file requirements-dev.lock pyproject.toml
 
 test:
 	$(VENV_PYTHON) -m pytest
