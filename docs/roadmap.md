@@ -93,7 +93,7 @@ Checkpoint:
 - AI command flow for `/ask`, `/summarize_log`, and `/incident`. (done; see `upgrade-roadmap.md`)
 - AI tool call audit. (done; see `upgrade-roadmap.md`)
 - Mocked full AI loop tests. (done; see `upgrade-roadmap.md`)
-- Owner `/audit` command.
+- Owner `/audit` command. (done; see `upgrade-roadmap.md`)
 - Dependency locking.
 - Docker socket safety hardening.
 - Final README review and production-use documentation cleanup.

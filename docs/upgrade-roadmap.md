@@ -77,20 +77,20 @@ Checkpoint:
 
 ## U5: Owner Audit Command
 
-Status: planned
+Status: complete
 
-- [ ] Add `/audit [limit]` command.
-- [ ] Enforce owner-only `VIEW_AUDIT`.
-- [ ] Add bounded limit parsing.
-- [ ] Format recent audit rows for Telegram.
-- [ ] Redact and truncate error text.
+- [x] Add `/audit [limit]` command.
+- [x] Enforce owner-only `VIEW_AUDIT`.
+- [x] Add bounded limit parsing.
+- [x] Format recent audit rows for Telegram.
+- [x] Redact and truncate error text.
 
 Checkpoint:
 
-- [ ] Owner can view recent audit rows.
-- [ ] Non-owner roles are denied.
-- [ ] Invalid limits are rejected with Vietnamese usage text.
-- [ ] Output remains compact for mobile incident use.
+- [x] Owner can view recent audit rows.
+- [x] Non-owner roles are denied.
+- [x] Invalid limits are rejected with Vietnamese usage text.
+- [x] Output remains compact for mobile incident use.
 
 ## U6: Dependency Locking
 

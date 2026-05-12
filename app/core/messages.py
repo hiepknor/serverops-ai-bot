@@ -11,6 +11,8 @@ MESSAGES: dict[str, dict[MessageKey, str]] = {
         "action_container_restarted": "Container restarted: {target}",
         "action_service_restarted": "Service restarted: {target}",
         "action_unsupported": "Unsupported action: {action}",
+        "audit_empty": "Recent audit: none",
+        "audit_header": "Recent audit",
         "confirmation_no_match": "No pending confirmation matched.",
         "confirmation_required": (
             "Confirmation required.\n"
@@ -34,6 +36,7 @@ MESSAGES: dict[str, dict[MessageKey, str]] = {
         "log_header": "Log: {name}",
         "restart_usage": "Usage: /restart <allowed-service> or /docker_restart <allowed-container>",
         "server_status_header": "Server status",
+        "usage_audit": "Usage: /audit [1-{max_limit}]",
         "usage_docker_logs": "Usage: /docker_logs <allowed-container>",
         "usage_ask": "Usage: /ask <question>",
         "usage_incident": "Usage: /incident <allowed-log-name>",
@@ -46,6 +49,8 @@ MESSAGES: dict[str, dict[MessageKey, str]] = {
         "action_container_restarted": "Đã khởi động lại container: {target}",
         "action_service_restarted": "Đã khởi động lại service: {target}",
         "action_unsupported": "Hành động chưa được hỗ trợ: {action}",
+        "audit_empty": "Audit gần đây: không có",
+        "audit_header": "Audit gần đây",
         "confirmation_no_match": "Không tìm thấy xác nhận đang chờ phù hợp.",
         "confirmation_required": (
             "Cần xác nhận trước khi thực thi.\n"
@@ -72,6 +77,7 @@ MESSAGES: dict[str, dict[MessageKey, str]] = {
             "/docker_restart <container-được-phép>"
         ),
         "server_status_header": "Trạng thái server",
+        "usage_audit": "Cách dùng: /audit [1-{max_limit}]",
         "usage_docker_logs": "Cách dùng: /docker_logs <container-được-phép>",
         "usage_ask": "Cách dùng: /ask <câu-hỏi>",
         "usage_incident": "Cách dùng: /incident <tên-log-được-phép>",

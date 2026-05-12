@@ -34,6 +34,7 @@ def test_build_application_registers_readonly_commands() -> None:
             "ask",
             "summarize_log",
             "incident",
+            "audit",
             "restart",
         "docker_restart",
     }.issubset(registered)

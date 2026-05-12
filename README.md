@@ -73,6 +73,12 @@ Powered by:
 /incident <allowed-log-name>
 ```
 
+### Owner
+
+```txt
+/audit [limit]
+```
+
 ### Deployment
 
 ```txt
@@ -379,7 +385,7 @@ deploy
 reboot
 docker
 backup
-audit
+/audit
 ```
 
 ## Admin
@@ -571,6 +577,7 @@ LLM can only call approved tools.
 /status
 /docker
 /log nginx
+/audit 10
 /restart dealerscan
 /deploy api
 ```
