@@ -16,7 +16,7 @@ def test_settings_parse_csv_roles_and_allowlists(monkeypatch: pytest.MonkeyPatch
     monkeypatch.setenv("LOG_LEVEL", "debug")
     monkeypatch.setenv("SERVEROPS_INIT_ONLY", "true")
 
-    settings = Settings()
+    settings = Settings(_env_file=None)
 
     assert settings.owner_ids == [100, 200]
     assert settings.admin_ids == [300]
@@ -32,4 +32,4 @@ def test_settings_require_owner_ids(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.delenv("OWNER_IDS", raising=False)
 
     with pytest.raises(ValidationError):
-        Settings()
+        Settings(_env_file=None)
