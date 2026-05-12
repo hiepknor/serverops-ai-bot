@@ -89,6 +89,13 @@ Checkpoint:
 
 ## Later
 
+- Scheduled read-only alerts to owners.
+- AI command flow for `/ask`, `/summarize_log`, and `/incident`.
+- AI tool call audit.
+- Mocked full AI loop tests.
+- Owner `/audit` command.
+- Dependency locking.
+- Docker socket safety hardening.
 - Multi-server support.
 - Web dashboard.
 - Metrics history.
@@ -96,3 +103,5 @@ Checkpoint:
 - Kubernetes support.
 - MCP integration.
 - Self-healing workflows.
+
+See `upgrade-roadmap.md` and `specs/upgrades.md` for the detailed post-MVP upgrade plan.

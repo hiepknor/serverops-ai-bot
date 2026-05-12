@@ -29,6 +29,7 @@ Telegram
 | `app.core.executor` | Timeout-bound subprocess or SDK execution. |
 | `app.core.audit` | Audit records for privileged actions. |
 | `app.core.alerts` | Scheduled checks and alert formatting. |
+| `app.alerts` | Scheduler wiring and Telegram alert delivery. |
 | `app.db` | SQLite connection and models. |
 
 ## Trust Boundaries
@@ -71,6 +72,10 @@ Minimum SQLite tables:
 - `confirmations`: pending dangerous-action confirmations.
 - `alerts`: optional emitted alert history.
 
+Planned upgrade tables should be added only when needed by a reviewed spec. AI
+tool-call audit should reuse `audit_events` first unless querying needs prove a
+separate table is warranted.
+
 Configuration remains environment-driven; do not store secrets in SQLite.
 
 ## Deployment Shape
@@ -86,3 +91,15 @@ container
 
 Use systemd only as a host-level wrapper around Docker Compose.
 
+## Upgrade Architecture Notes
+
+- AI command flow should be implemented as a small orchestration service that can
+  accept a fake Responses client in tests.
+- AI tool calls must continue to enter through `app.ai.router`; command handlers
+  must not execute host tools directly on behalf of model output.
+- Owner audit views should read sanitized `audit_events` rows and should not expose
+  raw secrets, stack traces, or unbounded error text.
+- Scheduled alerts should be read-only, disabled by default, routed only to
+  owners, cooldown-protected, and tested with fake clocks and fake Telegram sends.
+- Docker socket access should be gated by configuration before expanding Docker
+  features.
