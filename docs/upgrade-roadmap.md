@@ -25,21 +25,21 @@ Checkpoint:
 
 ## U2: AI Command Flow
 
-Status: planned
+Status: complete
 
-- [ ] Add AI command module under `app/commands`.
-- [ ] Register `/ask`, `/summarize_log`, and `/incident`.
-- [ ] Add an AI orchestration service that accepts an injected Responses client.
-- [ ] Build bounded sanitized context for log-focused commands.
-- [ ] Route model-requested tools only through `app.ai.router`.
-- [ ] Return concise Vietnamese responses.
+- [x] Add AI command module under `app/commands`.
+- [x] Register `/ask`, `/summarize_log`, and `/incident`.
+- [x] Add an AI orchestration service that accepts an injected Responses client.
+- [x] Build bounded sanitized context for log-focused commands.
+- [x] Route model-requested tools only through `app.ai.router`.
+- [x] Return concise Vietnamese responses.
 
 Checkpoint:
 
-- [ ] Unknown users are denied before OpenAI is called.
-- [ ] Viewer can summarize only allowlisted logs.
-- [ ] Fake OpenAI client tests cover text-only and tool-call responses.
-- [ ] No real OpenAI API call is required by default tests.
+- [x] Unknown users are denied before OpenAI is called.
+- [x] Viewer can summarize only allowlisted logs.
+- [x] Fake OpenAI client tests cover text-only and tool-call responses.
+- [x] No real OpenAI API call is required by default tests.
 
 ## U3: AI Tool Call Audit
 

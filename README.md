@@ -13,11 +13,9 @@ Built for personal servers, VPS, homelabs, and lightweight DevOps automation.
 Ask naturally:
 
 ```txt
-"Why is my server slow?"
-"Analyze nginx logs"
-"Why is the website returning 502?"
-"Restart DealerScan"
-"Summarize the last 200 log lines"
+/ask Vì sao server chậm?
+/summarize_log nginx_errors
+/incident nginx_errors
 ```
 
 Powered by:
@@ -65,6 +63,14 @@ Powered by:
 /log <service>
 /errors
 /nginx_errors
+```
+
+### AI
+
+```txt
+/ask <question>
+/summarize_log <allowed-log-name>
+/incident <allowed-log-name>
 ```
 
 ### Deployment
@@ -572,10 +578,10 @@ LLM can only call approved tools.
 AI Examples:
 
 ```txt
-"Why is nginx failing?"
-"Analyze docker memory usage"
-"Summarize the latest errors"
-"Check server health"
+/ask Vì sao nginx lỗi?
+/summarize_log nginx_errors
+/incident nginx_errors
+/ask Kiểm tra sức khỏe server
 ```
 
 ---

@@ -29,9 +29,12 @@ def test_build_application_registers_readonly_commands() -> None:
         "log",
         "errors",
         "nginx_errors",
-        "docker",
-        "docker_logs",
-        "restart",
+            "docker",
+            "docker_logs",
+            "ask",
+            "summarize_log",
+            "incident",
+            "restart",
         "docker_restart",
     }.issubset(registered)
     assert application.bot_data["settings"] is settings

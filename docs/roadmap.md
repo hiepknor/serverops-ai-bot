@@ -61,14 +61,14 @@ Checkpoint:
 - [x] Define Pydantic tool schemas.
 - [x] Add tool router with RBAC and allowlist checks.
 - [x] Add log and incident summarization prompts.
-- [ ] Add Telegram command flow for AI summaries.
+- [x] Add Telegram command flow for AI summaries.
 
 Checkpoint:
 
 - [x] AI cannot call tools outside the approved schema.
 - [x] AI sees sanitized, bounded context only.
 - [x] Tool-call rejection paths are tested.
-- [ ] AI command flow is tested without real OpenAI API calls.
+- [x] AI command flow is tested without real OpenAI API calls.
 
 ## Phase 5: Deployment
 
@@ -90,7 +90,7 @@ Checkpoint:
 ## Later
 
 - Scheduled read-only alerts to owners. (done; see `upgrade-roadmap.md`)
-- AI command flow for `/ask`, `/summarize_log`, and `/incident`.
+- AI command flow for `/ask`, `/summarize_log`, and `/incident`. (done; see `upgrade-roadmap.md`)
 - AI tool call audit.
 - Mocked full AI loop tests.
 - Owner `/audit` command.

@@ -35,7 +35,10 @@ MESSAGES: dict[str, dict[MessageKey, str]] = {
         "restart_usage": "Usage: /restart <allowed-service> or /docker_restart <allowed-container>",
         "server_status_header": "Server status",
         "usage_docker_logs": "Usage: /docker_logs <allowed-container>",
+        "usage_ask": "Usage: /ask <question>",
+        "usage_incident": "Usage: /incident <allowed-log-name>",
         "usage_log": "Usage: /log <allowed-log-name>",
+        "usage_summarize_log": "Usage: /summarize_log <allowed-log-name>",
     },
     "vi": {
         "access_denied": "Từ chối truy cập.",
@@ -70,7 +73,10 @@ MESSAGES: dict[str, dict[MessageKey, str]] = {
         ),
         "server_status_header": "Trạng thái server",
         "usage_docker_logs": "Cách dùng: /docker_logs <container-được-phép>",
+        "usage_ask": "Cách dùng: /ask <câu-hỏi>",
+        "usage_incident": "Cách dùng: /incident <tên-log-được-phép>",
         "usage_log": "Cách dùng: /log <tên-log-được-phép>",
+        "usage_summarize_log": "Cách dùng: /summarize_log <tên-log-được-phép>",
     },
 }
 

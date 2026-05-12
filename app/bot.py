@@ -8,6 +8,7 @@ from app.commands.actions import (
     docker_restart_command,
     restart_command,
 )
+from app.commands.ai import ask_command, incident_command, summarize_log_command
 from app.commands.readonly import (
     cpu_command,
     disk_command,
@@ -66,6 +67,9 @@ def register_handlers(
     application.add_handler(CommandHandler("nginx_errors", nginx_errors_command))
     application.add_handler(CommandHandler("docker", docker_command))
     application.add_handler(CommandHandler("docker_logs", docker_logs_command))
+    application.add_handler(CommandHandler("ask", ask_command))
+    application.add_handler(CommandHandler("summarize_log", summarize_log_command))
+    application.add_handler(CommandHandler("incident", incident_command))
     application.add_handler(CommandHandler("restart", restart_command))
     application.add_handler(CommandHandler("docker_restart", docker_restart_command))
     application.add_handler(
