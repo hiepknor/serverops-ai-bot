@@ -194,6 +194,18 @@ serverops-ai-bot/
 
 ---
 
+# 📚 Project Docs
+
+Start here for implementation context:
+
+* `AGENTS.md` — agent rules, safety boundaries, and workflow.
+* `docs/README.md` — compact context map for humans and AI agents.
+* `docs/specs/mvp.md` — MVP scope and acceptance criteria.
+* `docs/architecture.md` — module boundaries and safe executor design.
+* `docs/roadmap.md` — phased build order.
+
+---
+
 # 🚀 Quick Start
 
 ## 1. Clone Project

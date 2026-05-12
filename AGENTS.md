@@ -33,7 +33,7 @@ Only use frontend/browser skills if a future web dashboard is being built.
 
 ## Expected Architecture
 
-Follow the README structure unless a reviewed spec changes it:
+Follow the README structure unless a reviewed spec changes it. For implementation context, read `docs/README.md`, then the specific spec or architecture file relevant to the task.
 
 ```txt
 app/
