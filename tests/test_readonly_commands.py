@@ -34,7 +34,7 @@ def test_authorize_and_render_denies_unknown_user_before_renderer_runs() -> None
         make_settings(),
     )
 
-    assert response == "Access denied."
+    assert response == "Từ chối truy cập."
     assert not called
 
 
@@ -75,4 +75,15 @@ def test_status_metric_renderers_are_specific(monkeypatch) -> None:
 def test_docker_logs_unlisted_container_is_access_denied() -> None:
     response = render_docker_logs(make_settings(allowed_containers=["api"]), "db")
 
-    assert response == "Docker access denied: 'db' is not allowlisted"
+    assert response == "Từ chối truy cập Docker: 'db' is not allowlisted"
+
+
+def test_english_language_keeps_user_messages_in_english() -> None:
+    response = authorize_and_render(
+        Role.UNKNOWN,
+        Permission.VIEW_LOGS,
+        lambda current_settings: render_log(current_settings, "app"),
+        make_settings(bot_language="en"),
+    )
+
+    assert response == "Access denied."

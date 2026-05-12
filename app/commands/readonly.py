@@ -6,6 +6,7 @@ from telegram import Update
 from telegram.ext import ContextTypes
 
 from app.config import Settings
+from app.core.messages import message
 from app.core.security import Permission, Role, has_permission, resolve_role
 from app.tools.docker_tools import (
     DockerAccessError,
@@ -86,7 +87,7 @@ async def docker_logs_command(update: Update, context: ContextTypes.DEFAULT_TYPE
 def render_status(settings: Settings) -> str:
     snapshot = get_system_snapshot()
     return (
-        "Server status\n"
+        f"{message(settings, 'server_status_header')}\n"
         f"CPU: {snapshot.cpu_percent:.1f}%\n"
         f"RAM: {snapshot.memory_percent:.1f}%\n"
         f"Disk: {snapshot.disk_percent:.1f}%\n"
@@ -99,13 +100,14 @@ def render_health(settings: Settings) -> str:
     snapshot = get_system_snapshot()
     warnings = []
     if snapshot.cpu_percent >= 90:
-        warnings.append("high CPU")
+        warnings.append(message(settings, "health_warning_cpu"))
     if snapshot.memory_percent >= 90:
-        warnings.append("high RAM")
+        warnings.append(message(settings, "health_warning_memory"))
     if snapshot.disk_percent >= 90:
-        warnings.append("high disk")
-    state = "OK" if not warnings else "WARN: " + ", ".join(warnings)
-    return f"Health: {state}"
+        warnings.append(message(settings, "health_warning_disk"))
+    if not warnings:
+        return message(settings, "health_ok")
+    return message(settings, "health_warn", warnings=", ".join(warnings))
 
 
 def render_cpu(settings: Settings) -> str:
@@ -136,7 +138,7 @@ def render_uptime(settings: Settings) -> str:
 
 def render_log(settings: Settings, target: str | None) -> str:
     if not target:
-        return "Usage: /log <allowed-log-name>"
+        return message(settings, "usage_log")
     try:
         result = read_log_tail(
             target,
@@ -145,18 +147,19 @@ def render_log(settings: Settings, target: str | None) -> str:
             known_secrets=_known_secrets(settings),
         )
     except LogAccessError as exc:
-        return f"Log access denied: {exc}"
-    return f"Log: {result.name}\n{result.content or '(empty)'}"
+        return message(settings, "log_access_denied", error=exc)
+    content = result.content or message(settings, "log_empty")
+    return f"{message(settings, 'log_header', name=result.name)}\n{content}"
 
 
 def render_docker(settings: Settings) -> str:
     try:
         containers = list_containers(allowed_names=settings.allowed_containers)
     except DockerUnavailableError as exc:
-        return f"Docker unavailable: {exc}"
+        return message(settings, "docker_unavailable", error=exc)
     if not containers:
-        return "Docker containers: none"
-    lines = ["Docker containers"]
+        return message(settings, "docker_containers_empty")
+    lines = [message(settings, "docker_containers_header")]
     for container in containers:
         lines.append(f"- {container.name}: {container.status}")
     return "\n".join(lines)
@@ -164,7 +167,7 @@ def render_docker(settings: Settings) -> str:
 
 def render_docker_logs(settings: Settings, target: str | None) -> str:
     if not target:
-        return "Usage: /docker_logs <allowed-container>"
+        return message(settings, "usage_docker_logs")
     try:
         result = get_container_logs(
             target,
@@ -173,10 +176,13 @@ def render_docker_logs(settings: Settings, target: str | None) -> str:
             known_secrets=_known_secrets(settings),
         )
     except DockerAccessError as exc:
-        return f"Docker access denied: {exc}"
+        return message(settings, "docker_access_denied", error=exc)
     except DockerUnavailableError as exc:
-        return f"Docker unavailable: {exc}"
-    return f"Docker logs: {result.name}\n{result.content or '(empty)'}"
+        return message(settings, "docker_unavailable", error=exc)
+    return (
+        f"{message(settings, 'docker_logs_header', name=result.name)}\n"
+        f"{result.content or message(settings, 'log_empty')}"
+    )
 
 
 async def _reply(
@@ -201,7 +207,7 @@ def authorize_and_render(
     settings: Settings,
 ) -> str:
     if not has_permission(role, permission):
-        return "Access denied."
+        return message(settings, "access_denied")
     return renderer(settings)
 
 

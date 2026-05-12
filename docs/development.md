@@ -23,6 +23,7 @@ OWNER_IDS=
 ```
 
 `OWNER_IDS`, `ADMIN_IDS`, `VIEWER_IDS`, and allowlists accept comma-separated values.
+`BOT_LANGUAGE` accepts `vi` or `en`; the default is `vi`.
 
 For one-shot startup validation without connecting to Telegram:
 

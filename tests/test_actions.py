@@ -45,6 +45,8 @@ def test_request_confirmation_creates_pending_record_and_audit_event(tmp_path) -
     audit_rows = audit.list_recent()
 
     assert text in response
+    assert "Cần xác nhận trước khi thực thi." in response
+    assert "Vui lòng trả lời chính xác:" in response
     assert pending is not None
     assert audit_rows[0]["result"] == "pending_confirmation"
     assert audit_rows[0]["confirmation_status"] == "pending"
@@ -67,7 +69,7 @@ def test_request_confirmation_denies_viewer_before_creating_confirmation(tmp_pat
     )
 
     text = confirmation_text_for("restart_service", "nginx")
-    assert response == "Access denied."
+    assert response == "Từ chối truy cập."
     assert confirmations.get_pending_by_text(user_id=3, confirmation_text=text) is None
     assert audit.list_recent()[0]["result"] == "denied"
 
@@ -88,7 +90,7 @@ def test_request_confirmation_denies_unallowlisted_target(tmp_path) -> None:
         audit=audit,
     )
 
-    assert response == "Access denied: 'db' is not allowlisted"
+    assert response == "Từ chối truy cập. 'db' is not allowlisted"
     assert audit.list_recent()[0]["error"] == "'db' is not allowlisted"
 
 
@@ -120,7 +122,7 @@ def test_execute_confirmed_restart_service_calls_service_tool(monkeypatch) -> No
     result = execute_confirmed_action("restart_service", "nginx", make_settings())
 
     assert result.ok is True
-    assert result.message == "Service restarted: nginx"
+    assert result.message == "Đã khởi động lại service: nginx"
     assert calls == [("nginx", ["nginx"])]
 
 
@@ -136,5 +138,5 @@ def test_execute_confirmed_restart_container_calls_docker_tool(monkeypatch) -> N
     result = execute_confirmed_action("restart_container", "api", make_settings())
 
     assert result.ok is True
-    assert result.message == "Container restarted: api"
+    assert result.message == "Đã khởi động lại container: api"
     assert calls == [("api", ["api"])]

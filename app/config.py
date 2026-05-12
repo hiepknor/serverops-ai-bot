@@ -41,6 +41,7 @@ class Settings(BaseSettings):
 
     database_url: str = "sqlite:///data/serverops.db"
     log_level: str = "INFO"
+    bot_language: str = "vi"
     serverops_init_only: bool = False
     log_tail_lines: int = Field(default=200, ge=1, le=1000)
     docker_log_tail_lines: int = Field(default=200, ge=1, le=1000)
@@ -66,6 +67,15 @@ class Settings(BaseSettings):
         allowed = {"DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"}
         if normalized not in allowed:
             raise ValueError(f"LOG_LEVEL must be one of: {', '.join(sorted(allowed))}")
+        return normalized
+
+    @field_validator("bot_language")
+    @classmethod
+    def validate_bot_language(cls, value: str) -> str:
+        normalized = value.lower()
+        allowed = {"en", "vi"}
+        if normalized not in allowed:
+            raise ValueError(f"BOT_LANGUAGE must be one of: {', '.join(sorted(allowed))}")
         return normalized
 
 

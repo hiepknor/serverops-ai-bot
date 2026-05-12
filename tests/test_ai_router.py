@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from app.ai import router
+from app.ai.prompts import system_instructions
 from app.ai.router import route_tool_call
 from app.ai.schemas import openai_tool_definitions
 from app.config import Settings
@@ -123,3 +124,11 @@ def test_openai_tool_definitions_are_strict_function_tools() -> None:
         "lines",
     ]
     assert "default" not in definitions_by_name["read_log"]["parameters"]["properties"]["lines"]
+
+
+def test_ai_prompt_uses_vietnamese_without_translating_machine_tokens() -> None:
+    instructions = system_instructions("vi")
+
+    assert "Vietnamese" in instructions
+    assert "Keep command names" in instructions
+    assert "confirmation text unchanged" in instructions

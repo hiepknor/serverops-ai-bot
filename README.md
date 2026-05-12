@@ -265,10 +265,15 @@ VIEWER_IDS=
 DATABASE_URL=sqlite:///data/serverops.db
 
 LOG_LEVEL=INFO
+BOT_LANGUAGE=vi
 
 ALLOWED_CONTAINERS=nginx,api
 ALLOWED_LOG_FILES=nginx_errors:/host/var/log/nginx/error.log
 ```
+
+`BOT_LANGUAGE=vi` makes Telegram user-facing messages and AI responses Vietnamese by default.
+Use `BOT_LANGUAGE=en` only if you want English responses. Command names, audit action IDs, tool
+names, targets, and confirmation text stay machine-stable.
 
 ---
 

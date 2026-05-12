@@ -6,6 +6,7 @@ from telegram.ext import ContextTypes
 from app.config import Settings
 from app.core.audit import AuditEvent, AuditStore
 from app.core.confirmations import ConfirmationStore, confirmation_text_for
+from app.core.messages import message
 from app.core.security import Permission, Role, has_permission, resolve_role
 from app.tools.docker_tools import DockerAccessError, DockerUnavailableError, restart_container
 from app.tools.service_tools import ServiceAccessError, ServiceExecutionError, restart_service
@@ -48,7 +49,7 @@ async def confirmation_text_handler(update: Update, context: ContextTypes.DEFAUL
         confirmation_text=text,
     )
     if pending is None:
-        await update.effective_message.reply_text("No pending confirmation matched.")
+        await update.effective_message.reply_text(message(settings, "confirmation_no_match"))
         return
 
     result = execute_confirmed_action(pending.action, pending.target, settings)
@@ -77,16 +78,30 @@ class ActionResult:
 def execute_confirmed_action(action: str, target: str, settings: Settings) -> ActionResult:
     try:
         if action == "restart_service":
-            message = restart_service(target, allowed_services=settings.allowed_services)
+            restart_service(target, allowed_services=settings.allowed_services)
+            result_message = message(settings, "action_service_restarted", target=target)
         elif action == "restart_container":
-            message = restart_container(target, allowed_names=settings.allowed_containers)
+            restart_container(target, allowed_names=settings.allowed_containers)
+            result_message = message(settings, "action_container_restarted", target=target)
         else:
-            return ActionResult(ok=False, message=f"Unsupported action: {action}", error=action)
+            return ActionResult(
+                ok=False,
+                message=message(settings, "action_unsupported", action=action),
+                error=action,
+            )
     except (ServiceAccessError, DockerAccessError) as exc:
-        return ActionResult(ok=False, message=f"Access denied: {exc}", error=str(exc))
+        return ActionResult(
+            ok=False,
+            message=message(settings, "access_denied") + f" {exc}",
+            error=str(exc),
+        )
     except (ServiceExecutionError, DockerUnavailableError) as exc:
-        return ActionResult(ok=False, message=f"Action failed: {exc}", error=str(exc))
-    return ActionResult(ok=True, message=message)
+        return ActionResult(
+            ok=False,
+            message=message(settings, "action_failed", error=exc),
+            error=str(exc),
+        )
+    return ActionResult(ok=True, message=result_message)
 
 
 async def _request_confirmation(
@@ -130,7 +145,7 @@ def request_confirmation(
     audit: AuditStore,
 ) -> str:
     if not target:
-        return "Usage: /restart <allowed-service> or /docker_restart <allowed-container>"
+        return message(settings, "restart_usage")
 
     if not has_permission(role, permission):
         audit.record(
@@ -143,7 +158,7 @@ def request_confirmation(
                 confirmation_status="not_requested",
             )
         )
-        return "Access denied."
+        return message(settings, "access_denied")
 
     access_error = _validate_target(action, target, settings)
     if access_error is not None:
@@ -158,7 +173,7 @@ def request_confirmation(
                 error=access_error,
             )
         )
-        return f"Access denied: {access_error}"
+        return f"{message(settings, 'access_denied')} {access_error}"
 
     confirmation_text = confirmation_text_for(action, target)
     confirmations.create(
@@ -178,12 +193,12 @@ def request_confirmation(
             confirmation_status="pending",
         )
     )
-    return (
-        "Confirmation required.\n"
-        f"Action: {action}\n"
-        f"Target: {target}\n"
-        "Reply exactly:\n"
-        f"{confirmation_text}"
+    return message(
+        settings,
+        "confirmation_required",
+        action=action,
+        target=target,
+        confirmation_text=confirmation_text,
     )
 
 
@@ -199,4 +214,3 @@ def _first_arg(context: ContextTypes.DEFAULT_TYPE) -> str | None:
     if not context.args:
         return None
     return str(context.args[0]).strip()
-

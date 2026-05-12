@@ -14,6 +14,7 @@ def test_settings_parse_csv_roles_and_allowlists(monkeypatch: pytest.MonkeyPatch
     monkeypatch.setenv("VIEWER_IDS", "")
     monkeypatch.setenv("ALLOWED_SERVICES", "nginx, docker")
     monkeypatch.setenv("LOG_LEVEL", "debug")
+    monkeypatch.setenv("BOT_LANGUAGE", "vi")
     monkeypatch.setenv("SERVEROPS_INIT_ONLY", "true")
 
     settings = Settings(_env_file=None)
@@ -23,7 +24,18 @@ def test_settings_parse_csv_roles_and_allowlists(monkeypatch: pytest.MonkeyPatch
     assert settings.viewer_ids == []
     assert settings.allowed_services == ["nginx", "docker"]
     assert settings.log_level == "DEBUG"
+    assert settings.bot_language == "vi"
     assert settings.serverops_init_only is True
+
+
+def test_settings_reject_unknown_bot_language(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("TELEGRAM_BOT_TOKEN", "123456:telegram-token-value")
+    monkeypatch.setenv("OPENAI_API_KEY", "sk-testtokenvalue")
+    monkeypatch.setenv("OWNER_IDS", "100")
+    monkeypatch.setenv("BOT_LANGUAGE", "fr")
+
+    with pytest.raises(ValidationError):
+        Settings(_env_file=None)
 
 
 def test_settings_require_owner_ids(monkeypatch: pytest.MonkeyPatch) -> None:
