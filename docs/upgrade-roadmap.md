@@ -127,24 +127,24 @@ Checkpoint:
 
 ## U8: Final README Production Review
 
-Status: planned
+Status: complete
 
-- [ ] Review `README.md` against the implemented command set and actual files.
-- [ ] Remove or clearly mark planned-but-not-implemented features.
-- [ ] Normalize setup, `.env`, Docker Compose, systemd, and Makefile instructions.
-- [ ] Document all supported Telegram commands with role requirements.
-- [ ] Document security boundaries, confirmation behavior, audit behavior, and alert behavior.
-- [ ] Add a concise production runbook for install, start, update, rollback, and log inspection.
-- [ ] Add troubleshooting notes for Telegram, OpenAI, Docker socket, SQLite data, and permissions.
-- [ ] Confirm examples use Vietnamese-first user-facing behavior where applicable.
+- [x] Review `README.md` against the implemented command set and actual files.
+- [x] Remove or clearly mark planned-but-not-implemented features.
+- [x] Normalize setup, `.env`, Docker Compose, systemd, and Makefile instructions.
+- [x] Document all supported Telegram commands with role requirements.
+- [x] Document security boundaries, confirmation behavior, audit behavior, and alert behavior.
+- [x] Add a concise production runbook for install, start, update, rollback, and log inspection.
+- [x] Add troubleshooting notes for Telegram, OpenAI, Docker socket, SQLite data, and permissions.
+- [x] Confirm examples use Vietnamese-first user-facing behavior where applicable.
 
 Checkpoint:
 
-- [ ] README matches actual code behavior.
-- [ ] A new operator can configure `.env` safely from `.env.example`.
-- [ ] Production startup steps are accurate for Docker Compose and systemd.
-- [ ] Security warnings are explicit and not buried.
-- [ ] Verification commands in README pass on a clean checkout.
+- [x] README matches actual code behavior.
+- [x] A new operator can configure `.env` safely from `.env.example`.
+- [x] Production startup steps are accurate for Docker Compose and systemd.
+- [x] Security warnings are explicit and not buried.
+- [x] Verification commands in README pass on a clean checkout.
 
 ## Production Readiness Gate
 

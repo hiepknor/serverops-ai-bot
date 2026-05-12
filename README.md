@@ -1,284 +1,96 @@
-# 🖥 ServerOps AI Bot
+# ServerOps AI Bot
 
-AI-powered Telegram bot for managing Linux servers, Docker containers, deployments, logs, monitoring, and troubleshooting using OpenAI LLMs.
+Telegram bot for safe Linux, Docker, log, monitoring, and AI-assisted server
+operations. The bot is intentionally constrained: all host actions must pass
+through allowlisted tools, RBAC, confirmations, and audit logging.
 
-Built for personal servers, VPS, homelabs, and lightweight DevOps automation.
+ServerOps AI Bot is built for one personal server, VPS, homelab, or lightweight
+production box. It is not a generic shell bot.
 
----
+## What Works Today
 
-# ✨ Features
+- Read-only system status: `/status`, `/health`, `/cpu`, `/ram`, `/disk`, `/uptime`
+- Allowlisted log reads: `/log <name>`, `/errors`, `/nginx_errors`
+- Docker status/log reads, disabled by default: `/docker`, `/docker_logs <container>`
+- Confirmed restart actions: `/restart <service>`, `/docker_restart <container>`
+- AI help through OpenAI Responses API: `/ask`, `/summarize_log`, `/incident`
+- Scheduled read-only CPU/RAM/disk alerts to owners, disabled by default
+- Owner audit inspection: `/audit [limit]`
+- Docker Compose and systemd deployment examples
 
-## 🤖 AI Server Assistant
+Planned but not implemented here: deploy/pull/rebuild workflows, arbitrary
+service start/stop, backup automation, multi-server support, web dashboard, and
+self-healing actions.
 
-Ask naturally:
+## Safety Model
 
-```txt
-/ask Vì sao server chậm?
-/summarize_log nginx_errors
-/incident nginx_errors
-```
+The model may analyze logs, summarize incidents, and request approved tools. It
+cannot execute arbitrary shell commands, access secrets, bypass RBAC, bypass
+confirmation gates, or invent tool targets.
 
-Powered by:
-
-* OpenAI Responses API
-* GPT-4.1 Mini
-* Tool Calling
-* Structured Outputs
-
----
-
-## 🛠 Server Management
-
-### System
-
-```txt
-/status
-/health
-/cpu
-/ram
-/disk
-/uptime
-```
-
-### Services
+Runtime flow:
 
 ```txt
-/services
-/restart <service>
-/stop <service>
-/start <service>
+Telegram -> RBAC/Auth -> OpenAI Responses API -> Tool Router -> Allowlisted Tools
 ```
 
-### Docker
+Security boundaries:
 
-```txt
-/docker
-/docker_logs <container>
-/docker_restart <container>
-```
+- Telegram users are resolved to owner, admin, viewer, or unknown.
+- Unknown users are denied before OpenAI or host access.
+- Read-only tools still require RBAC and allowlisted targets.
+- Restart actions require exact confirmation text.
+- Docker tools are disabled by default with `ENABLE_DOCKER_TOOLS=false`.
+- Secrets are redacted before Telegram responses, AI context, logs, and audit rows.
+- Privileged actions and AI tool calls are audited.
 
-### Logs
+## Roles And Commands
 
-```txt
-/log <service>
-/errors
-/nginx_errors
-```
+| Command | Owner | Admin | Viewer | Notes |
+| --- | --- | --- | --- | --- |
+| `/status` | yes | yes | yes | CPU, RAM, disk, uptime summary |
+| `/health` | yes | yes | yes | Warns on high CPU/RAM/disk |
+| `/cpu`, `/ram`, `/disk`, `/uptime` | yes | yes | yes | Single metric commands |
+| `/log <name>` | yes | yes | yes | `name` must be in `ALLOWED_LOG_FILES` |
+| `/errors`, `/nginx_errors` | yes | yes | yes | Predefined allowlisted log names |
+| `/docker` | yes | yes | yes | Requires `ENABLE_DOCKER_TOOLS=true` |
+| `/docker_logs <container>` | yes | yes | yes | Container must be allowlisted |
+| `/ask <question>` | yes | yes | yes | AI may request approved tools |
+| `/summarize_log <name>` | yes | yes | yes | Reads sanitized allowlisted log context |
+| `/incident <name>` | yes | yes | yes | Incident-style AI log summary |
+| `/restart <service>` | yes | yes | no | Requires confirmation and allowlist |
+| `/docker_restart <container>` | yes | yes | no | Requires Docker enabled, confirmation, allowlist |
+| `/audit [limit]` | yes | no | no | Limit defaults to 10, max 50 |
 
-### AI
+## Configuration
 
-```txt
-/ask <question>
-/summarize_log <allowed-log-name>
-/incident <allowed-log-name>
-```
-
-### Owner
-
-```txt
-/audit [limit]
-```
-
-### Deployment
-
-```txt
-/deploy <project>
-/pull
-/rebuild
-```
-
----
-
-# 🔐 Security First
-
-ServerOps AI Bot is designed with a safe execution architecture.
-
-The LLM:
-
-✅ Can analyze logs
-✅ Can summarize issues
-✅ Can call approved tools
-
-The LLM:
-
-❌ Cannot execute arbitrary shell commands
-❌ Cannot access secrets
-❌ Cannot bypass RBAC
-❌ Cannot run unrestricted sudo
-
----
-
-# 🧠 AI Architecture
-
-```txt
-Telegram
-   ↓
-ServerOps AI Bot
-   ↓
-RBAC + Auth
-   ↓
-OpenAI Responses API
-   ↓
-Tool Router
-   ↓
-Whitelist Executor
-   ↓
-Linux / Docker / Logs
-```
-
----
-
-# 🏗 Tech Stack
-
-## Core
-
-* Python 3.11+
-* python-telegram-bot
-* OpenAI Responses API
-* Pydantic
-* APScheduler
-* structlog
-
-## Monitoring
-
-* psutil
-* Docker SDK
-
-## Database
-
-* SQLite
-
-## Deployment
-
-* Docker
-* Docker Compose
-* systemd
-
----
-
-# 📦 Project Structure
-
-```txt
-serverops-ai-bot/
-├── app/
-│   ├── main.py
-│   ├── config.py
-│   ├── bot.py
-│   │
-│   ├── ai/
-│   │   ├── agent.py
-│   │   ├── prompts.py
-│   │   ├── router.py
-│   │   └── schemas.py
-│   │
-│   ├── commands/
-│   │   ├── status.py
-│   │   ├── logs.py
-│   │   ├── docker.py
-│   │   ├── deploy.py
-│   │   └── admin.py
-│   │
-│   ├── tools/
-│   │   ├── system_tools.py
-│   │   ├── docker_tools.py
-│   │   ├── service_tools.py
-│   │   ├── git_tools.py
-│   │   └── log_tools.py
-│   │
-│   ├── core/
-│   │   ├── executor.py
-│   │   ├── alerts.py
-│   │   ├── audit.py
-│   │   └── security.py
-│   │
-│   └── db/
-│       ├── database.py
-│       └── models.py
-│
-├── data/
-├── docker-compose.yml
-├── Dockerfile
-├── Makefile
-├── pyproject.toml
-├── .env.example
-├── README.md
-└── serverops-ai-bot.service
-```
-
----
-
-# 📚 Project Docs
-
-Start here for implementation context:
-
-* `AGENTS.md` — agent rules, safety boundaries, and workflow.
-* `docs/README.md` — compact context map for humans and AI agents.
-* `docs/specs/mvp.md` — MVP scope and acceptance criteria.
-* `docs/architecture.md` — module boundaries and safe executor design.
-* `docs/roadmap.md` — phased build order.
-* `docs/development.md` — local development setup and verification commands.
-
----
-
-# 🚀 Quick Start
-
-## 1. Clone Project
+Create `.env` from `.env.example`:
 
 ```bash
-git clone https://github.com/yourname/serverops-ai-bot.git
-
-cd serverops-ai-bot
+cp .env.example .env
 ```
 
----
-
-## 2. Create Telegram Bot
-
-Open:
-
-https://t.me/BotFather
-
-Create bot:
-
-```txt
-/serveropsaibot
-```
-
-Get bot token.
-
----
-
-## 3. Create OpenAI API Key
-
-Open:
-
-https://platform.openai.com/api-keys
-
-Create API key.
-
----
-
-## 4. Configure Environment
-
-Create `.env`
+Required values:
 
 ```env
-TELEGRAM_BOT_TOKEN=xxxxxxxx
+TELEGRAM_BOT_TOKEN=
+OPENAI_API_KEY=
+OWNER_IDS=
+```
 
-OPENAI_API_KEY=xxxxxxxx
+Common settings:
 
+```env
 OPENAI_MODEL=gpt-4.1-mini
-
-OWNER_IDS=123456789
-
-ADMIN_IDS=
-VIEWER_IDS=
-
 DATABASE_URL=sqlite:///data/serverops.db
-
 LOG_LEVEL=INFO
 BOT_LANGUAGE=vi
+SERVEROPS_INIT_ONLY=false
+
+LOG_TAIL_LINES=200
 ENABLE_DOCKER_TOOLS=false
+DOCKER_LOG_TAIL_LINES=200
+
 ENABLE_ALERTS=false
 ALERT_INTERVAL_SECONDS=60
 ALERT_COOLDOWN_SECONDS=900
@@ -287,45 +99,55 @@ ALERT_RAM_PERCENT=90
 ALERT_DISK_PERCENT=90
 ALERT_DOCKER_ENABLED=false
 
+ALLOWED_SERVICES=nginx
 ALLOWED_CONTAINERS=nginx,api
 ALLOWED_LOG_FILES=nginx_errors:/host/var/log/nginx/error.log
 ```
 
-`BOT_LANGUAGE=vi` makes Telegram user-facing messages and AI responses Vietnamese by default.
-Use `BOT_LANGUAGE=en` only if you want English responses. Command names, audit action IDs, tool
-names, targets, and confirmation text stay machine-stable.
+`OWNER_IDS`, `ADMIN_IDS`, `VIEWER_IDS`, `ALLOWED_SERVICES`,
+`ALLOWED_CONTAINERS`, and `ALLOWED_LOG_FILES` are comma-separated.
 
-`ENABLE_ALERTS=false` keeps scheduled alerts disabled by default. Set it to `true`
-only when owner IDs and thresholds are configured; alerts are read-only and notify
-`OWNER_IDS` only.
+`BOT_LANGUAGE=vi` is the default for Telegram user-facing messages. Use
+`BOT_LANGUAGE=en` for English. Command names, audit action IDs, target names,
+and confirmation text remain machine-stable.
 
-`ENABLE_DOCKER_TOOLS=false` keeps `/docker`, `/docker_logs`, `/docker_restart`, and
-Docker AI tools disabled by default. Set it to `true` only when you accept Docker
-socket exposure and have narrow `ALLOWED_CONTAINERS`.
+## Local Development
 
----
-
-# 🧪 Local Development
+Dependencies are pinned with `pip-tools`.
 
 ```bash
 make install
 make check
 ```
 
-Dependencies are pinned with `pip-tools`:
+Useful commands:
 
-* `requirements.lock` is the runtime lock used by Docker.
-* `requirements-dev.lock` is the local development lock.
-* After changing dependency ranges in `pyproject.toml`, run `make lock`.
+```bash
+make test
+make lint
+make init-only
+make lock
+```
 
----
+Lock files:
 
-# 🐳 Docker Deployment
+- `requirements.lock` pins runtime dependencies for Docker.
+- `requirements-dev.lock` pins runtime plus test/lint tooling.
+- Run `make lock` after changing dependency ranges in `pyproject.toml`.
 
-## Build & Run
+## Docker Compose Deployment
+
+Build and start:
 
 ```bash
 make docker-up
+```
+
+Inspect:
+
+```bash
+make docker-ps
+make docker-logs
 ```
 
 Stop:
@@ -334,109 +156,56 @@ Stop:
 make docker-down
 ```
 
-Follow logs:
+Smoke check:
 
 ```bash
-make docker-logs
+make docker-check
 ```
 
----
+`docker-compose.yml` mounts:
 
-## docker-compose.yml
-
-```yaml
-services:
-  serverops-ai-bot:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: serverops-ai-bot
-    restart: unless-stopped
-    env_file:
-      - .env
-    volumes:
-      - ./data:/app/data
-      - /var/log:/host/var/log:ro
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-```
+- `./data:/app/data` for SQLite and runtime state.
+- `/var/log:/host/var/log:ro` for allowlisted log reads.
+- `/var/run/docker.sock:/var/run/docker.sock:ro` for Docker SDK access.
 
 The Docker socket is a high-trust host boundary even when mounted read-only.
-Prefer running without the socket unless Docker commands are required. If you do
+Prefer running without the socket if Docker commands are not needed. If you do
 mount it, keep `ENABLE_DOCKER_TOOLS=false` until explicitly needed, keep
 `ALLOWED_CONTAINERS` narrow, do not run the container as privileged, and consider
 a Docker socket proxy that allowlists only the endpoints this bot needs.
 
----
+## systemd Wrapper
 
-# 🔧 systemd Service
-
-```ini
-[Unit]
-Description=ServerOps AI Bot
-After=docker.service
-Requires=docker.service
-
-[Service]
-Type=oneshot
-WorkingDirectory=/opt/serverops-ai-bot
-ExecStart=/usr/bin/docker compose up -d --build
-ExecStop=/usr/bin/docker compose down
-RemainAfterExit=yes
-TimeoutStartSec=0
-
-[Install]
-WantedBy=multi-user.target
-```
-
-Enable:
+The included `serverops-ai-bot.service` wraps Docker Compose:
 
 ```bash
+sudo cp serverops-ai-bot.service /etc/systemd/system/serverops-ai-bot.service
+sudo systemctl daemon-reload
 sudo systemctl enable serverops-ai-bot
 sudo systemctl start serverops-ai-bot
+sudo systemctl status serverops-ai-bot
 ```
 
----
+Update flow:
 
-# 🔑 RBAC Roles
-
-## Owner
-
-Full access:
-
-```txt
-restart
-deploy
-reboot
-docker
-backup
-/audit
+```bash
+git pull --ff-only
+make docker-up
+make docker-ps
 ```
 
-## Admin
+Rollback flow:
 
-Limited management:
-
-```txt
-restart services
-view logs
-view status
+```bash
+git log --oneline
+git checkout <known-good-commit>
+make docker-up
 ```
 
-## Viewer
+## Confirmation Flow
 
-Read-only:
-
-```txt
-status
-logs
-health
-```
-
----
-
-# ⚠ Dangerous Actions Require Confirmation
-
-Restart actions require exact confirmation text.
+Restart commands create a pending confirmation. The bot returns exact text that
+must be sent back unchanged.
 
 Example:
 
@@ -444,197 +213,73 @@ Example:
 /restart nginx
 ```
 
-Bot:
+Reply exactly with the generated confirmation text:
 
 ```txt
-Confirmation required.
-Action: restart_service
-Target: nginx
-Reply exactly:
 CONFIRM RESTART SERVICE NGINX
 ```
 
-Docker restart uses the Telegram-compatible command name:
+Docker restart uses the Telegram-safe command name:
 
 ```txt
 /docker_restart api
 ```
 
-Example:
+## Alerts
+
+Scheduled alerts are disabled by default. When `ENABLE_ALERTS=true`, the bot
+checks CPU, RAM, and disk thresholds on a bounded interval and sends concise
+Vietnamese alerts to `OWNER_IDS` only. Alert checks are read-only and cooldown
+protected.
+
+## Audit
+
+Audit rows include user ID, role, command/action/tool, target, result,
+confirmation status, timestamp, and sanitized error text. Owners can inspect
+recent rows from Telegram:
 
 ```txt
-/deploy dealerscan
+/audit
+/audit 25
 ```
 
-Bot:
+## Troubleshooting
 
-```txt
-⚠ Confirm deployment?
+Telegram:
 
-Project: dealerscan
+- Verify `TELEGRAM_BOT_TOKEN`.
+- Verify the Telegram user ID is present in `OWNER_IDS`, `ADMIN_IDS`, or `VIEWER_IDS`.
+- Unknown users are intentionally denied.
 
-Actions:
-- git pull
-- rebuild
-- restart container
+OpenAI:
 
-Reply:
-CONFIRM DEPLOY DEALERSCAN
-```
+- Verify `OPENAI_API_KEY`.
+- Confirm outbound network access from the container.
+- Default tests never call the OpenAI API.
 
----
+Docker:
 
-# 📊 Automatic Monitoring
+- Keep `ENABLE_DOCKER_TOOLS=false` unless Docker commands are required.
+- If Docker commands are enabled, verify the socket mount and `ALLOWED_CONTAINERS`.
+- A read-only Docker socket is still powerful; prefer a socket proxy for production.
 
-ServerOps AI Bot automatically monitors:
+SQLite/data:
 
-* CPU usage
-* RAM usage
-* Disk usage
-* Docker container health
-* Service crashes
-* nginx 502/504 spikes
-* Python tracebacks
+- Runtime state lives under `data/`.
+- Ensure the container can write to `./data`.
+- Do not commit `.env`, database files, logs, or runtime artifacts.
 
-Example alert:
+Logs:
 
-```txt
-🚨 Server Alert
+- Host logs must be mounted under `/host/var/log`.
+- Every readable log target must be listed as `name:path` in `ALLOWED_LOG_FILES`.
 
-Service: dealerscan
-Status: failed
+## Project Docs
 
-Possible cause:
-Database connection timeout
-
-Suggested actions:
-- /log dealerscan
-- /restart dealerscan
-```
-
----
-
-# 🧾 Audit Logging
-
-Every sensitive action is logged:
-
-```txt
-User
-Action
-Time
-Result
-Target
-Confirmation status
-```
-
----
-
-# 🧠 OpenAI Tool Calling
-
-Example tool schema:
-
-```python
-class RestartServiceInput(BaseModel):
-    service_name: Literal[
-        "nginx",
-        "postgres",
-        "docker",
-        "dealerscan"
-    ]
-```
-
-LLM can only call approved tools.
-
----
-
-# 🔒 Security Recommendations
-
-## DO
-
-✅ Use Docker
-✅ Use allowlisted tools
-✅ Use confirmation flow
-✅ Restrict Telegram IDs
-✅ Use read-only mounts when possible
-
-## DON'T
-
-❌ Allow arbitrary shell execution
-❌ Mount entire host filesystem
-❌ Use privileged containers
-❌ Expose secrets to LLM prompts
-
----
-
-# 📈 Future Roadmap
-
-## V1
-
-* Telegram management
-* AI troubleshooting
-* Docker integration
-* Log summarization
-* Monitoring alerts
-* RBAC
-
-## V2
-
-* Multi-server support
-* Web dashboard
-* Metrics history
-* Backup automation
-* AI incident reports
-
-## V3
-
-* Kubernetes support
-* MCP integration
-* Distributed agents
-* Self-healing workflows
-* AI-powered root cause analysis
-
----
-
-# 🖥 Example Commands
-
-```txt
-/status
-/docker
-/log nginx
-/audit 10
-/restart dealerscan
-/deploy api
-```
-
-AI Examples:
-
-```txt
-/ask Vì sao nginx lỗi?
-/summarize_log nginx_errors
-/incident nginx_errors
-/ask Kiểm tra sức khỏe server
-```
-
----
-
-# 📜 License
-
-MIT License
-
----
-
-# ❤️ Built For
-
-* Personal servers
-* VPS management
-* Homelabs
-* Small production deployments
-* AI-powered DevOps workflows
-
----
-
-# 🤝 Contributing
-
-PRs and ideas are welcome.
-
-Build safe AI Ops tools responsibly.
+- `AGENTS.md` - agent rules, safety boundaries, and workflow.
+- `docs/README.md` - compact context map.
+- `docs/specs/mvp.md` - MVP scope and acceptance criteria.
+- `docs/specs/upgrades.md` - post-MVP upgrade tracks.
+- `docs/architecture.md` - module boundaries and safe executor design.
+- `docs/roadmap.md` - phased build order.
+- `docs/development.md` - local development and verification commands.

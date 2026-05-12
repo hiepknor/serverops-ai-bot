@@ -96,7 +96,7 @@ Checkpoint:
 - Owner `/audit` command. (done; see `upgrade-roadmap.md`)
 - Dependency locking. (done; see `upgrade-roadmap.md`)
 - Docker socket safety hardening. (done; see `upgrade-roadmap.md`)
-- Final README review and production-use documentation cleanup.
+- Final README review and production-use documentation cleanup. (done; see `upgrade-roadmap.md`)
 - Multi-server support.
 - Web dashboard.
 - Metrics history.
