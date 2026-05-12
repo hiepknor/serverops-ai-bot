@@ -53,14 +53,10 @@ Build a safe Telegram operations assistant for one Linux server or VPS. The bot 
 
 ## Commands
 
-The exact commands will be finalized when the Python project is scaffolded.
-
-Expected defaults:
-
 ```bash
-python -m app.main
-pytest
-ruff check .
+.venv/bin/python -m app.main
+.venv/bin/python -m pytest
+.venv/bin/python -m ruff check .
 docker compose up -d --build
 ```
 
@@ -154,4 +150,3 @@ Use mocked executors for Docker, systemd, git, OpenAI, and Telegram APIs by defa
 - Which exact services, containers, projects, and log files should be allowlisted for the first deployment?
 - Should `/restart <service>` require confirmation for all roles or only non-owner roles?
 - Should deployment commands be included in MVP or delayed until the safe executor is proven?
-

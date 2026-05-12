@@ -203,6 +203,7 @@ Start here for implementation context:
 * `docs/specs/mvp.md` — MVP scope and acceptance criteria.
 * `docs/architecture.md` — module boundaries and safe executor design.
 * `docs/roadmap.md` — phased build order.
+* `docs/development.md` — local development setup and verification commands.
 
 ---
 

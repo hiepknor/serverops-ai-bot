@@ -17,17 +17,17 @@ Checkpoint:
 
 ## Phase 1: Safe Foundation
 
-- [ ] Scaffold Python package and tests.
-- [ ] Add config loading with required env validation.
-- [ ] Add structured logging and secret redaction.
-- [ ] Add SQLite audit store.
-- [ ] Add RBAC role resolver and permission matrix.
+- [x] Scaffold Python package and tests.
+- [x] Add config loading with required env validation.
+- [x] Add structured logging and secret redaction.
+- [x] Add SQLite audit store.
+- [x] Add RBAC role resolver and permission matrix.
 
 Checkpoint:
 
-- [ ] `pytest` passes.
-- [ ] Missing required config fails fast.
-- [ ] RBAC and redaction tests pass.
+- [x] `pytest` passes.
+- [x] Missing required config fails fast.
+- [x] RBAC and redaction tests pass.
 
 ## Phase 2: Read-Only Operations
 
@@ -91,4 +91,3 @@ Checkpoint:
 - Kubernetes support.
 - MCP integration.
 - Self-healing workflows.
-
