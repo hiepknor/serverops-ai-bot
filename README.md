@@ -9,6 +9,7 @@ production box. It is not a generic shell bot.
 
 ## What Works Today
 
+- Basic help: `/start`, `/help`
 - Read-only system status: `/status`, `/health`, `/cpu`, `/ram`, `/disk`, `/uptime`
 - Allowlisted log reads: `/log <name>`, `/errors`, `/nginx_errors`
 - Docker status/log reads, disabled by default: `/docker`, `/docker_logs <container>`
@@ -48,6 +49,7 @@ Security boundaries:
 
 | Command | Owner | Admin | Viewer | Notes |
 | --- | --- | --- | --- | --- |
+| `/start`, `/help` | yes | yes | yes | Shows available commands for the user role |
 | `/status` | yes | yes | yes | CPU, RAM, disk, uptime summary |
 | `/health` | yes | yes | yes | Warns on high CPU/RAM/disk |
 | `/cpu`, `/ram`, `/disk`, `/uptime` | yes | yes | yes | Single metric commands |

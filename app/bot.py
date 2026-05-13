@@ -10,6 +10,7 @@ from app.commands.actions import (
 )
 from app.commands.ai import ask_command, incident_command, summarize_log_command
 from app.commands.audit import audit_command
+from app.commands.help import help_command, start_command
 from app.commands.readonly import (
     cpu_command,
     disk_command,
@@ -57,6 +58,8 @@ def register_handlers(
         settings.database_url
     )
     register_alert_jobs(application, settings, audit_store)
+    application.add_handler(CommandHandler("start", start_command))
+    application.add_handler(CommandHandler("help", help_command))
     application.add_handler(CommandHandler("status", status_command))
     application.add_handler(CommandHandler("health", health_command))
     application.add_handler(CommandHandler("cpu", cpu_command))
