@@ -7,6 +7,8 @@ import structlog
 
 def configure_logging(level: str = "INFO") -> None:
     logging.basicConfig(level=level, format="%(message)s")
+    for noisy_logger in ("httpx", "httpcore"):
+        logging.getLogger(noisy_logger).setLevel(logging.WARNING)
     structlog.configure(
         processors=[
             structlog.contextvars.merge_contextvars,
@@ -17,4 +19,3 @@ def configure_logging(level: str = "INFO") -> None:
         wrapper_class=structlog.make_filtering_bound_logger(getattr(logging, level)),
         cache_logger_on_first_use=True,
     )
-
